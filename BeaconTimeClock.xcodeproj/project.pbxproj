@@ -197,6 +197,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				es,
 				Base,
 			);
 			mainGroup = 94AB80A3308413D100668FE7;

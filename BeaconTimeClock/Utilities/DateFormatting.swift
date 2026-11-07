@@ -133,6 +133,9 @@ enum DateFormatting {
         let display = DateFormatter() // Human-readable label for the app.
         display.calendar = companyCalendar
         display.timeZone = companyCalendar.timeZone
+        display.locale = Locale(identifier: UserDefaults.standard.string(
+            forKey: AppLocalization.storageKey
+        ) ?? AppLanguage.english.rawValue)
         display.dateFormat = "MMM d"
         return "\(display.string(from: first)) – \(display.string(from: last))"
     }

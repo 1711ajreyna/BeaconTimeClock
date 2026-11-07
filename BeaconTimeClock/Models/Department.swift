@@ -19,15 +19,15 @@ enum Department: String, Codable, CaseIterable, Identifiable, Hashable {
     var displayName: String {
         switch self {
         case .electrical:
-            return "Electrical"
+            return AppLocalization.text("Electrical")
         case .machineShop:
-            return "Machine Shop"
+            return AppLocalization.text("Machine Shop")
         case .metals:
-            return "Metals"
+            return AppLocalization.text("Metals")
         case .plastics:
-            return "Plastics"
+            return AppLocalization.text("Plastics")
         case .litho:
-            return "Litho"
+            return AppLocalization.text("Litho")
         }
     }
     

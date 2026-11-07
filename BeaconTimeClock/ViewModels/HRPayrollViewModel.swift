@@ -57,7 +57,7 @@ final class HRPayrollViewModel: ObservableObject {
     func load() async {
         guard isAuthorized else {
             packet = nil
-            errorMessage = "HR or administrator access is required."
+            errorMessage = AppLocalization.text("HR or administrator access is required.")
             return
         }
         isLoading = true

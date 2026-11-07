@@ -24,7 +24,7 @@ struct BrandHeaderView: View {
                     .tracking(1.5)
                     .foregroundStyle(CSCTheme.steel)
 
-                Text(subtitle)
+                Text(AppLocalization.text(subtitle))
                     .font(.title3.weight(.bold))
                     .foregroundStyle(CSCTheme.ink)
             }

@@ -42,7 +42,7 @@ struct EmployeeClockView: View {
                     punchButtons
 
                     if !viewModel.statusMessage.isEmpty {
-                        Text(viewModel.statusMessage)
+                        Text(AppLocalization.text(viewModel.statusMessage))
                             .frame(
                                 maxWidth: .infinity,
                                 alignment: .leading
@@ -104,9 +104,9 @@ struct EmployeeClockView: View {
             spacing: 8
         ) {
             Label(
-                beacon.isInsideAllowedZone
+                AppLocalization.text(beacon.isInsideAllowedZone
                     ? "Inside Approved Clock Zone"
-                    : "Outside Clock Zone",
+                    : "Outside Clock Zone"),
                 systemImage: beacon.isInsideAllowedZone
                     ? "checkmark.circle.fill"
                     : "antenna.radiowaves.left.and.right.slash"
@@ -118,13 +118,13 @@ struct EmployeeClockView: View {
             if let distance = beacon.estimatedDistanceMeters {
                 Text(
                     String(
-                        format: "Estimated distance: %.2f m",
+                        format: AppLocalization.text("Estimated distance: %.2f m"),
                         distance
                     )
                 )
             }
 
-            Text("Next action: \(viewModel.nextExpectedPunch.displayName)")
+            Text("\(AppLocalization.text("Next action:")) \(viewModel.nextExpectedPunch.displayName)")
                 .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)

@@ -9,9 +9,9 @@ enum ApprovalStatus: String, Codable, Hashable {
 
     var displayName: String {
         switch self {
-        case .pending: return "Awaiting Approval"
-        case .approved: return "Approved"
-        case .sentToHR: return "Sent to HR"
+        case .pending: return AppLocalization.text("Awaiting Approval")
+        case .approved: return AppLocalization.text("Approved")
+        case .sentToHR: return AppLocalization.text("Sent to HR")
         }
     }
 }

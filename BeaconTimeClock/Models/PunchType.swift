@@ -14,11 +14,11 @@ enum PunchType: String, Codable, CaseIterable, Identifiable, Hashable {
     var displayName: String {
         switch self {
         // A clock-in changes which attendance event is valid next.
-        case .clockIn: return "Clock In"
-        case .lunchOut: return "Lunch Out"
-        case .lunchIn: return "Lunch In"
+        case .clockIn: return AppLocalization.text("Clock In")
+        case .lunchOut: return AppLocalization.text("Lunch Out")
+        case .lunchIn: return AppLocalization.text("Lunch In")
         // Clock-out completes the current punch sequence.
-        case .clockOut: return "Clock Out"
+        case .clockOut: return AppLocalization.text("Clock Out")
         }
     }
     

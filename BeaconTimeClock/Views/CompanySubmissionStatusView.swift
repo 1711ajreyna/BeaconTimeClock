@@ -28,8 +28,8 @@ struct CompanySubmissionStatusView: View {
                     Section("Previous Payroll Week") {
                         Text("\(response.weekStart) – \(response.weekEnd)")
                         Label(
-                            response.hrDeliveryConfirmed ? "HR delivery confirmed" :
-                                "Some departments still need approval or delivery",
+                            AppLocalization.text(response.hrDeliveryConfirmed ? "HR delivery confirmed" :
+                                "Some departments still need approval or delivery"),
                             systemImage: response.hrDeliveryConfirmed
                                 ? "checkmark.seal.fill" : "clock"
                         )

@@ -62,12 +62,12 @@ final class EmployeeClockViewModel: ObservableObject {
 
     func submit(_ type: PunchType) async {
         guard beaconManager.isInsideAllowedZone else {
-            fail("Move into the approved beacon zone before punching.")
+            fail(AppLocalization.text("Move into the approved beacon zone before punching."))
             return
         }
 
         guard nextExpectedPunch == type else {
-            fail("The next expected action is \(nextExpectedPunch.displayName).")
+            fail("\(AppLocalization.text("The next expected action is")) \(nextExpectedPunch.displayName).")
             return
         }
 
@@ -134,7 +134,7 @@ final class EmployeeClockViewModel: ObservableObject {
             }
 
             statusMessage =
-                "\(type.displayName) accepted at \(response.serverTimestamp.formatted(date: .omitted, time: .shortened))."
+                "\(type.displayName) \(AppLocalization.text("accepted at")) \(response.serverTimestamp.formatted(date: .omitted, time: .shortened))."
         } catch {
             if let latest = store.latestPunch,
                latest.syncStatus == "pending" {

@@ -1,0 +1,2863 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "%@ – %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ – %2$@"
+          }
+        }
+      }
+    },
+    "%@ — %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ — %2$@"
+          }
+        }
+      }
+    },
+    "%@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@"
+          }
+        }
+      }
+    },
+    "%@ %@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@ %3$@"
+          }
+        }
+      }
+    },
+    "%@ • %@ total hours" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ • %2$@ total hours"
+          }
+        }
+      }
+    },
+    "%lld" : {
+
+    },
+    "%lld assigned employees" : {
+
+    },
+    "%lld employee(s)" : {
+
+    },
+    "2 minutes before an active rest break ends" : {
+
+    },
+    "2 minutes before Rest Break 1 begins" : {
+
+    },
+    "2 minutes before Rest Break 2 begins" : {
+
+    },
+    "5 minutes before Clock Out" : {
+
+    },
+    "5 minutes before Lunch" : {
+
+    },
+    "Accept & Start" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aceptar e iniciar"
+          }
+        }
+      }
+    },
+    "Accept & Start %@" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aceptar e iniciar %@"
+          }
+        }
+      }
+    },
+    "Accepted & Completed" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aceptado y completado"
+          }
+        }
+      }
+    },
+    "accepted at" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "registrado a las"
+          }
+        }
+      }
+    },
+    "Accepting starts the paid 10-minute timer. Denying requires biometric confirmation and creates a supervisor-visible exception; it does not reduce paid hours or act as a legal waiver." : {
+
+    },
+    "Account" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuenta"
+          }
+        }
+      }
+    },
+    "Add %@" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agregar %@"
+          }
+        }
+      }
+    },
+    "Add Employee" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agregar empleado"
+          }
+        }
+      }
+    },
+    "Adjust" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Corregir"
+          }
+        }
+      }
+    },
+    "Adjust Punch" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Corregir marcación"
+          }
+        }
+      }
+    },
+    "Adjustment reason is required for the audit trail." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se requiere un motivo para registrar la corrección."
+          }
+        }
+      }
+    },
+    "Admin" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Administrador"
+          }
+        }
+      }
+    },
+    "All departments approved — HR packet is ready." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todos los departamentos aprobaron; el paquete está listo para RR. HH."
+          }
+        }
+      }
+    },
+    "All departments approved — merged workbook emailed to HR." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todos los departamentos aprobaron; se envió el reporte a RR. HH."
+          }
+        }
+      }
+    },
+    "An end clock time earlier than the start automatically means the next calendar day. This first version supports an 8-hour paid shift plus a 30-minute meal." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una hora de salida anterior a la de entrada indica automáticamente el día siguiente. Esta versión admite turnos de 8 horas pagadas y 30 minutos de comida."
+          }
+        }
+      }
+    },
+    "App language" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Idioma de la aplicación"
+          }
+        }
+      }
+    },
+    "Approval" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aprobación"
+          }
+        }
+      }
+    },
+    "Approvals" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aprobaciones"
+          }
+        }
+      }
+    },
+    "Approve & Sign" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aprobar y firmar"
+          }
+        }
+      }
+    },
+    "Approve Department?" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Aprobar departamento?"
+          }
+        }
+      }
+    },
+    "Approve, Date & Digitally Sign" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aprobar, fechar y firmar digitalmente"
+          }
+        }
+      }
+    },
+    "Approved" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aprobado"
+          }
+        }
+      }
+    },
+    "Approved - waiting for HR" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aprobado; pendiente de RR. HH."
+          }
+        }
+      }
+    },
+    "Approved timesheets are locked." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las hojas de horas aprobadas están bloqueadas."
+          }
+        }
+      }
+    },
+    "Assigned Employees — %@" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empleados asignados — %@"
+          }
+        }
+      }
+    },
+    "Assigned Employees — %lld" : {
+
+    },
+    "Automatic Warnings" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avisos automáticos"
+          }
+        }
+      }
+    },
+    "Awaiting Approval" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pendiente de aprobación"
+          }
+        }
+      }
+    },
+    "Awaiting supervisor" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pendiente del supervisor"
+          }
+        }
+      }
+    },
+    "BeaconTimeClock" : {
+
+    },
+    "BeaconTimeClock emblem" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Emblema de BeaconTimeClock"
+          }
+        }
+      }
+    },
+    "Break 1" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descanso 1"
+          }
+        }
+      }
+    },
+    "Break 1 adjustment: %@" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajuste del descanso 1: %@"
+          }
+        }
+      }
+    },
+    "Break 2" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descanso 2"
+          }
+        }
+      }
+    },
+    "Break 2 adjustment: %@" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajuste del descanso 2: %@"
+          }
+        }
+      }
+    },
+    "Break controls open with the 2-minute warning before the scheduled start." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los controles se habilitan con el aviso de 2 minutos antes del inicio programado."
+          }
+        }
+      }
+    },
+    "Break denial recorded for supervisor review." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El rechazo del descanso se registró para revisión del supervisor."
+          }
+        }
+      }
+    },
+    "Break Review" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revisión de descansos"
+          }
+        }
+      }
+    },
+    "Break timer" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Temporizador de descanso"
+          }
+        }
+      }
+    },
+    "Breaks remain inside their applicable work periods." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los descansos deben mantenerse dentro del período de trabajo correspondiente."
+          }
+        }
+      }
+    },
+    "Cancel" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancelar"
+          }
+        }
+      }
+    },
+    "Choose one employee below to stagger only that employee's two paid rest breaks." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seleccione un empleado para ajustar únicamente sus dos descansos pagados."
+          }
+        }
+      }
+    },
+    "Clear My Demo" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Borrar mis datos de prueba"
+          }
+        }
+      }
+    },
+    "Clear Signature" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Borrar firma"
+          }
+        }
+      }
+    },
+    "Clock" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reloj"
+          }
+        }
+      }
+    },
+    "Clock In" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Registrar entrada"
+          }
+        }
+      }
+    },
+    "CLOCK IN" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "REGISTRAR ENTRADA"
+          }
+        }
+      }
+    },
+    "Clock Out" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Registrar salida"
+          }
+        }
+      }
+    },
+    "Combined Packet" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paquete combinado"
+          }
+        }
+      }
+    },
+    "Company Access" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Acceso de la empresa"
+          }
+        }
+      }
+    },
+    "Company Departments" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Departamentos de la empresa"
+          }
+        }
+      }
+    },
+    "Company HR Status" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estado de RR. HH."
+          }
+        }
+      }
+    },
+    "Company Shifts" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turnos de la empresa"
+          }
+        }
+      }
+    },
+    "Complete %@" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finalizar %@"
+          }
+        }
+      }
+    },
+    "CONTAINER SUPPLY" : {
+
+    },
+    "Corrected" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Corregido"
+          }
+        }
+      }
+    },
+    "Corrected Time" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hora corregida"
+          }
+        }
+      }
+    },
+    "Create Shift" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crear turno"
+          }
+        }
+      }
+    },
+    "Creates clearly labeled simulated approvals to preview the PDFs. Does not send email, approve real work, or mark payroll complete." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crea aprobaciones simuladas claramente identificadas para ver los PDF. No envía correos ni aprueba trabajo real ni finaliza la nómina."
+          }
+        }
+      }
+    },
+    "Delivered to HR" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entregado a RR. HH."
+          }
+        }
+      }
+    },
+    "Demo PDF Preview" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vista previa de PDF de demostración"
+          }
+        }
+      }
+    },
+    "Demonstration" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Demostración"
+          }
+        }
+      }
+    },
+    "DEMONSTRATION ACCOUNTS" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CUENTAS DE DEMOSTRACIÓN"
+          }
+        }
+      }
+    },
+    "Demonstration Mode" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modo de demostración"
+          }
+        }
+      }
+    },
+    "Demonstration Only" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solo demostración"
+          }
+        }
+      }
+    },
+    "Denied / Not Taken — Supervisor Review" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rechazado / no tomado — revisión del supervisor"
+          }
+        }
+      }
+    },
+    "Deny / Did Not Take" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rechazar / no tomado"
+          }
+        }
+      }
+    },
+    "Deny / Did Not Take %@" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rechazar / no tomado %@"
+          }
+        }
+      }
+    },
+    "Deny Scheduled Rest Break?" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Rechazar el descanso programado?"
+          }
+        }
+      }
+    },
+    "Department" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Departamento"
+          }
+        }
+      }
+    },
+    "Department forms" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Formularios departamentales"
+          }
+        }
+      }
+    },
+    "Department Payroll Forms" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Formularios de nómina por departamento"
+          }
+        }
+      }
+    },
+    "Department Rosters" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Listas de empleados por departamento"
+          }
+        }
+      }
+    },
+    "Department Status" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estado de departamentos"
+          }
+        }
+      }
+    },
+    "Department Totals" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Totales del departamento"
+          }
+        }
+      }
+    },
+    "Digital Signature" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firma digital"
+          }
+        }
+      }
+    },
+    "Digital signature recorded" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firma digital registrada"
+          }
+        }
+      }
+    },
+    "Done" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Listo"
+          }
+        }
+      }
+    },
+    "Duration" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Duración"
+          }
+        }
+      }
+    },
+    "Each department begins on its OWN payroll-entry form, with individual daily punch detail pages afterward. PDF export is not an ADP/payroll submission." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cada departamento tiene su propio formulario de captura de nómina, seguido de los detalles diarios por empleado. Exportar el PDF no envía información a ADP ni procesa la nómina."
+          }
+        }
+      }
+    },
+    "Edit" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Editar"
+          }
+        }
+      }
+    },
+    "Edit Employee Breaks" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Editar descansos del empleado"
+          }
+        }
+      }
+    },
+    "Edit This Employee's Rest Breaks" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Editar los descansos de este empleado"
+          }
+        }
+      }
+    },
+    "Electrical" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eléctrico"
+          }
+        }
+      }
+    },
+    "Email" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Correo electrónico"
+          }
+        }
+      }
+    },
+    "Employee" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empleado"
+          }
+        }
+      }
+    },
+    "EMPLOYEE" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "EMPLEADO"
+          }
+        }
+      }
+    },
+    "Employee #" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "N.º de empleado"
+          }
+        }
+      }
+    },
+    "Employee #: %@" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "N.º de empleado: %@"
+          }
+        }
+      }
+    },
+    "Employee added to this shift." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empleado agregado al turno."
+          }
+        }
+      }
+    },
+    "Employee break time" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Horario de descanso del empleado"
+          }
+        }
+      }
+    },
+    "Employee recorded scheduled rest break as not taken." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El empleado registró que no tomó el descanso programado."
+          }
+        }
+      }
+    },
+    "Employee removed from the roster." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empleado eliminado de la lista."
+          }
+        }
+      }
+    },
+    "Employee rest-break schedule updated." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se actualizó el horario de descansos del empleado."
+          }
+        }
+      }
+    },
+    "Employee sign in" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inicio de sesión de empleados"
+          }
+        }
+      }
+    },
+    "Employee Time Clock" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reloj de asistencia"
+          }
+        }
+      }
+    },
+    "employee(s)" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "empleados"
+          }
+        }
+      }
+    },
+    "employees" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "empleados"
+          }
+        }
+      }
+    },
+    "End Time" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hora de salida"
+          }
+        }
+      }
+    },
+    "English" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inglés"
+          }
+        }
+      }
+    },
+    "Enter a reason for changing Rest Break 1." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ingrese el motivo del cambio del descanso 1."
+          }
+        }
+      }
+    },
+    "Enter a reason for changing Rest Break 2." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ingrese el motivo del cambio del descanso 2."
+          }
+        }
+      }
+    },
+    "Español" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Español"
+          }
+        }
+      }
+    },
+    "Estimated distance" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Distancia estimada"
+          }
+        }
+      }
+    },
+    "Estimated distance: %.2f m" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Distancia estimada: %.2f m"
+          }
+        }
+      }
+    },
+    "Five distinct department packets must be approved, signed, and free of unresolved time-punch exceptions before HR PDF export." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los paquetes de los cinco departamentos deben estar aprobados, firmados y sin incidencias sin resolver antes de exportar los PDF."
+          }
+        }
+      }
+    },
+    "Fix all punch exceptions before approval." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Corrija todas las incidencias de marcación antes de aprobar."
+          }
+        }
+      }
+    },
+    "For class testing only. Password: %@" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solo para pruebas de clase. Contraseña: %@"
+          }
+        }
+      }
+    },
+    "Form" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Formulario"
+          }
+        }
+      }
+    },
+    "Forms are locked until all five departments have signed, approved timesheets." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los formularios permanecerán bloqueados hasta que los cinco departamentos firmen y aprueben sus hojas de horas."
+          }
+        }
+      }
+    },
+    "Generates five simulated, signed example forms for class demonstrations only. No real payroll is sent or approved." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Genera cinco formularios de ejemplo con firmas simuladas solo para demostraciones de clase. No envía ni aprueba nómina real."
+          }
+        }
+      }
+    },
+    "Hello, world!" : {
+
+    },
+    "Hour" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hora"
+          }
+        }
+      }
+    },
+    "HR" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "RR. HH."
+          }
+        }
+      }
+    },
+    "HR delivery confirmed" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entrega a RR. HH. confirmada"
+          }
+        }
+      }
+    },
+    "HR or administrator access is required." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se requiere acceso de RR. HH. o de administrador."
+          }
+        }
+      }
+    },
+    "HR Payroll" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nómina de RR. HH."
+          }
+        }
+      }
+    },
+    "HR Status" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estado de RR. HH."
+          }
+        }
+      }
+    },
+    "In Progress" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En curso"
+          }
+        }
+      }
+    },
+    "Inside Approved Clock Zone" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dentro de la zona autorizada"
+          }
+        }
+      }
+    },
+    "Language" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Idioma"
+          }
+        }
+      }
+    },
+    "Litho" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Litografía"
+          }
+        }
+      }
+    },
+    "Loading" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cargando"
+          }
+        }
+      }
+    },
+    "Loading company profile…" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cargando perfil de la empresa…"
+          }
+        }
+      }
+    },
+    "Loading department packet…" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cargando paquete del departamento…"
+          }
+        }
+      }
+    },
+    "Loading HR packets…" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cargando paquetes de RR. HH.…"
+          }
+        }
+      }
+    },
+    "Loading schedules…" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cargando horarios…"
+          }
+        }
+      }
+    },
+    "Loading shifts…" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cargando turnos…"
+          }
+        }
+      }
+    },
+    "Loading status…" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cargando estado…"
+          }
+        }
+      }
+    },
+    "Loading today's shift…" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cargando turno de hoy…"
+          }
+        }
+      }
+    },
+    "Loading weekly workflow…" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cargando proceso semanal…"
+          }
+        }
+      }
+    },
+    "Lunch" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comida"
+          }
+        }
+      }
+    },
+    "Lunch In" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Regresar de comida"
+          }
+        }
+      }
+    },
+    "Lunch is intentionally read-only in this employee-level editor. A separate HR/admin policy workflow should control meal-period changes." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El horario de comida es de solo lectura en este editor. Los cambios deben gestionarse por separado mediante RR. HH. o administración."
+          }
+        }
+      }
+    },
+    "Lunch Out" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salir a comer"
+          }
+        }
+      }
+    },
+    "Lunch Remaining" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tiempo de comida restante"
+          }
+        }
+      }
+    },
+    "Machine Shop" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Taller de máquinas"
+          }
+        }
+      }
+    },
+    "MANUFACTURING · SINCE 1947" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FABRICACIÓN · DESDE 1947"
+          }
+        }
+      }
+    },
+    "Metals" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Metales"
+          }
+        }
+      }
+    },
+    "Midpoint %@" : {
+
+    },
+    "Minute" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minuto"
+          }
+        }
+      }
+    },
+    "Morning" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mañana"
+          }
+        }
+      }
+    },
+    "Move into the approved beacon zone before punching." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Acérquese a la zona autorizada de la baliza antes de registrar su hora."
+          }
+        }
+      }
+    },
+    "My Shift" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mi turno"
+          }
+        }
+      }
+    },
+    "My Time" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mis horas"
+          }
+        }
+      }
+    },
+    "My Weekly Timecard" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mi tarjeta semanal"
+          }
+        }
+      }
+    },
+    "name@company.com" : {
+
+    },
+    "New Shift" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nuevo turno"
+          }
+        }
+      }
+    },
+    "NEXT" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SIGUIENTE"
+          }
+        }
+      }
+    },
+    "Next action" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Próxima acción"
+          }
+        }
+      }
+    },
+    "Next action:" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Próxima acción:"
+          }
+        }
+      }
+    },
+    "Next action: %@" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Próxima acción: %@"
+          }
+        }
+      }
+    },
+    "Next week" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Semana siguiente"
+          }
+        }
+      }
+    },
+    "No data" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sin datos"
+          }
+        }
+      }
+    },
+    "No punches recorded" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hay marcaciones registradas"
+          }
+        }
+      }
+    },
+    "No unassigned employees in this department." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hay empleados sin asignar en este departamento."
+          }
+        }
+      }
+    },
+    "Nobody assigned yet." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todavía no hay nadie asignado."
+          }
+        }
+      }
+    },
+    "Not generated" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sin generar"
+          }
+        }
+      }
+    },
+    "Not Taken" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No tomado"
+          }
+        }
+      }
+    },
+    "OK" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aceptar"
+          }
+        }
+      }
+    },
+    "Only HR and administrators can view payroll details." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solo RR. HH. y los administradores pueden ver los detalles de nómina."
+          }
+        }
+      }
+    },
+    "Open" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir"
+          }
+        }
+      }
+    },
+    "Open %@ Form" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir formulario de %@"
+          }
+        }
+      }
+    },
+    "Open All Five Department Forms" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir los cinco formularios departamentales"
+          }
+        }
+      }
+    },
+    "Original" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Original"
+          }
+        }
+      }
+    },
+    "Original Punch" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marcación original"
+          }
+        }
+      }
+    },
+    "Original: %@" : {
+
+    },
+    "Other department supervisors" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supervisores de otros departamentos"
+          }
+        }
+      }
+    },
+    "Outside Clock Zone" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fuera de la zona autorizada"
+          }
+        }
+      }
+    },
+    "Overtime" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Horas extra"
+          }
+        }
+      }
+    },
+    "Overtime Forecast" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pronóstico de horas extra"
+          }
+        }
+      }
+    },
+    "Paid Break In Progress" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descanso pagado en curso"
+          }
+        }
+      }
+    },
+    "Paid rest-break duration" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Duración del descanso pagado"
+          }
+        }
+      }
+    },
+    "Password" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contraseña"
+          }
+        }
+      }
+    },
+    "PASSWORD" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CONTRASEÑA"
+          }
+        }
+      }
+    },
+    "Pay Period" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Período de pago"
+          }
+        }
+      }
+    },
+    "Plastics" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plásticos"
+          }
+        }
+      }
+    },
+    "Please provide a signature." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ingrese una firma."
+          }
+        }
+      }
+    },
+    "Prepare Five Signed Example Packets" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparar cinco paquetes firmados de ejemplo"
+          }
+        }
+      }
+    },
+    "Preview Demo Payroll PDF" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vista previa del PDF de nómina de prueba"
+          }
+        }
+      }
+    },
+    "Previous Payroll Week" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Semana de nómina anterior"
+          }
+        }
+      }
+    },
+    "Previous week" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Semana anterior"
+          }
+        }
+      }
+    },
+    "Previous Week" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Semana anterior"
+          }
+        }
+      }
+    },
+    "Production sessions are restored automatically after relaunch while the refresh session remains valid. Face ID/Touch ID is still required for sensitive attendance actions." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La sesión de producción se restaura automáticamente mientras sea válida. Face ID/Touch ID sigue siendo obligatorio para las acciones de asistencia sensibles."
+          }
+        }
+      }
+    },
+    "Projected OT" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Horas extra proyectadas"
+          }
+        }
+      }
+    },
+    "Projected total" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Total proyectado"
+          }
+        }
+      }
+    },
+    "Punch adjusted." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marcación corregida."
+          }
+        }
+      }
+    },
+    "Punch Exception" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Incidencia de marcación"
+          }
+        }
+      }
+    },
+    "Punch Not Recorded" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marcación no registrada"
+          }
+        }
+      }
+    },
+    "Reason for changing this employee's Break 1" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Motivo del cambio del descanso 1 de este empleado"
+          }
+        }
+      }
+    },
+    "Reason for changing this employee's Break 2" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Motivo del cambio del descanso 2 de este empleado"
+          }
+        }
+      }
+    },
+    "Reason: %@" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Motivo: %@"
+          }
+        }
+      }
+    },
+    "Recommended Break 1 midpoint" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Punto medio recomendado del descanso 1"
+          }
+        }
+      }
+    },
+    "Recommended Break 2 midpoint" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Punto medio recomendado del descanso 2"
+          }
+        }
+      }
+    },
+    "Recommended midpoint" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Punto medio recomendado"
+          }
+        }
+      }
+    },
+    "Regular" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Regulares"
+          }
+        }
+      }
+    },
+    "Regular %.2f / OT %.2f / Total %.2f" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Regulares %.2f / Extra %.2f / Total %.2f"
+          }
+        }
+      }
+    },
+    "Regular Hours" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Horas regulares"
+          }
+        }
+      }
+    },
+    "RELIABLE" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CONFIABLE"
+          }
+        }
+      }
+    },
+    "RELIABLE  ·  FUNCTIONAL  ·  SUSTAINABLE" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CONFIABLE  ·  FUNCIONAL  ·  SOSTENIBLE"
+          }
+        }
+      }
+    },
+    "Remove" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quitar"
+          }
+        }
+      }
+    },
+    "Required reason" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Motivo obligatorio"
+          }
+        }
+      }
+    },
+    "Reset Weekly Demo" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reiniciar demostración semanal"
+          }
+        }
+      }
+    },
+    "Resolve all punch exceptions before approval." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resuelva todas las incidencias de marcación antes de aprobar."
+          }
+        }
+      }
+    },
+    "Rest Break" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descanso"
+          }
+        }
+      }
+    },
+    "Rest Break 1" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descanso 1"
+          }
+        }
+      }
+    },
+    "Rest Break 1 Ended" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descanso 1 terminado"
+          }
+        }
+      }
+    },
+    "Rest Break 1 Not Taken" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descanso 1 no tomado"
+          }
+        }
+      }
+    },
+    "Rest Break 1 Started" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descanso 1 iniciado"
+          }
+        }
+      }
+    },
+    "Rest Break 2" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descanso 2"
+          }
+        }
+      }
+    },
+    "Rest Break 2 Ended" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descanso 2 terminado"
+          }
+        }
+      }
+    },
+    "Rest Break 2 Not Taken" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descanso 2 no tomado"
+          }
+        }
+      }
+    },
+    "Rest Break 2 Started" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descanso 2 iniciado"
+          }
+        }
+      }
+    },
+    "Rest Break Activity" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actividad de descansos"
+          }
+        }
+      }
+    },
+    "Rest-Break Timing" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Horario de descansos"
+          }
+        }
+      }
+    },
+    "Restoring secure session…" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restaurando sesión segura…"
+          }
+        }
+      }
+    },
+    "Restricted Payroll Area" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Área de nómina restringida"
+          }
+        }
+      }
+    },
+    "Role" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Función"
+          }
+        }
+      }
+    },
+    "RSSI: %lld dBm" : {
+
+    },
+    "Save" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guardar"
+          }
+        }
+      }
+    },
+    "Save Changes" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guardar cambios"
+          }
+        }
+      }
+    },
+    "Scheduled" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Programado"
+          }
+        }
+      }
+    },
+    "Schedules" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Horarios"
+          }
+        }
+      }
+    },
+    "SCHEDULES" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HORARIOS"
+          }
+        }
+      }
+    },
+    "Share or Save Last PDF" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compartir o guardar el último PDF"
+          }
+        }
+      }
+    },
+    "Shift" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turno"
+          }
+        }
+      }
+    },
+    "Shift / Meal" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turno / comida"
+          }
+        }
+      }
+    },
+    "Shift Details" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Detalles del turno"
+          }
+        }
+      }
+    },
+    "Shift Employees" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empleados del turno"
+          }
+        }
+      }
+    },
+    "Shift event logged." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Evento del turno registrado."
+          }
+        }
+      }
+    },
+    "Shift name" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nombre del turno"
+          }
+        }
+      }
+    },
+    "Shift Rosters" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Listas de turnos"
+          }
+        }
+      }
+    },
+    "Shift Schedules" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Horarios de turnos"
+          }
+        }
+      }
+    },
+    "Shift Start" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inicio del turno"
+          }
+        }
+      }
+    },
+    "Shift starts on %@" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El turno comienza el %@"
+          }
+        }
+      }
+    },
+    "Sign In" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Iniciar sesión"
+          }
+        }
+      }
+    },
+    "Sign Out" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cerrar sesión"
+          }
+        }
+      }
+    },
+    "Signed" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firmado"
+          }
+        }
+      }
+    },
+    "Some departments still need approval or delivery" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Algunos departamentos aún requieren aprobación o entrega"
+          }
+        }
+      }
+    },
+    "Source" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Origen"
+          }
+        }
+      }
+    },
+    "Source: weekly backend snapshots. Approved hours are not recalculated on the phone." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Origen: registros semanales del servidor. Las horas aprobadas no se recalculan en el teléfono."
+          }
+        }
+      }
+    },
+    "Start Time" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hora de inicio"
+          }
+        }
+      }
+    },
+    "Still awaiting approval" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aún pendiente de aprobación"
+          }
+        }
+      }
+    },
+    "Submit" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enviar"
+          }
+        }
+      }
+    },
+    "Supervisor" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supervisor"
+          }
+        }
+      }
+    },
+    "Supervisor Approval" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aprobación del supervisor"
+          }
+        }
+      }
+    },
+    "Supervisor Portal" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Portal del supervisor"
+          }
+        }
+      }
+    },
+    "Supervisor printed name" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nombre del supervisor en letra de molde"
+          }
+        }
+      }
+    },
+    "The app defaults paid rest breaks near the middle of each work period. A supervisor may stagger an individual employee's break when operationally necessary, but the backend keeps Break 1 in the first work period and Break 2 in the second." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De forma predeterminada, los descansos pagados se sitúan cerca de la mitad de cada período de trabajo. Un supervisor puede ajustar el horario según las operaciones, pero el servidor mantiene cada descanso dentro de su período correspondiente."
+          }
+        }
+      }
+    },
+    "The backend records the authoritative approval date, stores the signature privately, and hashes the approved timesheet snapshot." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El servidor registra la fecha oficial de aprobación, guarda la firma de forma privada y protege con un hash la hoja de horas aprobada."
+          }
+        }
+      }
+    },
+    "The break cannot be completed before the full paid 10-minute period has elapsed." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El descanso no se puede finalizar antes de que transcurran los 10 minutos pagados."
+          }
+        }
+      }
+    },
+    "The default recommendation places each paid rest break near the midpoint of its work period. Supervisors may stagger an individual employee when operations require it, but the break must remain inside that employee's applicable work period." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se recomienda programar cada descanso pagado cerca de la mitad del período de trabajo. Los supervisores pueden ajustar su horario cuando sea necesario, siempre dentro del período correspondiente."
+          }
+        }
+      }
+    },
+    "The next expected action is" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La próxima acción esperada es"
+          }
+        }
+      }
+    },
+    "The original punch is preserved. The correction is stored as a separate supervisor audit record." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se conserva la marcación original. La corrección se guarda en un registro de auditoría independiente."
+          }
+        }
+      }
+    },
+    "These are this device's cached punches. Complete historical rest-breaks and authoritative weekly hours require the production weekly-history API." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estas son las marcaciones guardadas en este dispositivo. El historial completo de descansos y horas semanales requiere la API de producción."
+          }
+        }
+      }
+    },
+    "This locks the department packet. Further punch changes require an administrative reopen workflow." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esto bloquea el paquete del departamento. Los cambios posteriores requieren una reapertura administrativa."
+          }
+        }
+      }
+    },
+    "This records that the offered paid rest break was not taken. Face ID or Touch ID is required, and the event is flagged for supervisor review. It is not treated as a waiver of workplace rights." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se registrará que el descanso pagado ofrecido no fue tomado. Se requiere Face ID o Touch ID y se notificará al supervisor. Esto no implica renunciar a los derechos laborales."
+          }
+        }
+      }
+    },
+    "Timesheet" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoja de horas"
+          }
+        }
+      }
+    },
+    "Timesheet approved." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoja de horas aprobada."
+          }
+        }
+      }
+    },
+    "Today's Schedule" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Horario de hoy"
+          }
+        }
+      }
+    },
+    "Total" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Total"
+          }
+        }
+      }
+    },
+    "Type" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tipo"
+          }
+        }
+      }
+    },
+    "Unable to Clear" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo borrar"
+          }
+        }
+      }
+    },
+    "Unable to Load Profile" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo cargar el perfil"
+          }
+        }
+      }
+    },
+    "UNAPPROVED — SUPERVISOR REVIEW" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SIN APROBAR — REVISIÓN DEL SUPERVISOR"
+          }
+        }
+      }
+    },
+    "Unknown" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desconocido"
+          }
+        }
+      }
+    },
+    "Use this after demonstrating punch corrections and approvals so the five departments return to their starting state." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use esta opción después de demostrar correcciones y aprobaciones para restaurar el estado inicial de los cinco departamentos."
+          }
+        }
+      }
+    },
+    "Use your assigned company account" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use su cuenta de empresa asignada"
+          }
+        }
+      }
+    },
+    "Warnings are scheduled locally after the shift is downloaded, so they can still fire if network connectivity is temporarily lost." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los avisos se programan en el dispositivo después de descargar el turno y pueden activarse aunque se pierda temporalmente la conexión."
+          }
+        }
+      }
+    },
+    "Week" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Semana"
+          }
+        }
+      }
+    },
+    "Week %@" : {
+
+    },
+    "Work date" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fecha de trabajo"
+          }
+        }
+      }
+    },
+    "Work Date" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fecha de trabajo"
+          }
+        }
+      }
+    },
+    "WORK EMAIL" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CORREO LABORAL"
+          }
+        }
+      }
+    },
+    "Worked this week" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Horas trabajadas esta semana"
+          }
+        }
+      }
+    },
+    "Workweek" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Semana laboral"
+          }
+        }
+      }
+    },
+    "Your workday. Clearly recorded." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Su jornada laboral, registrada con claridad."
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

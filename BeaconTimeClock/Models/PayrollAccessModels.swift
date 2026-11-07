@@ -12,10 +12,10 @@ enum CompanyDepartmentStage: String, Codable, Hashable {
 
     var displayName: String {
         switch self {
-        case .notGenerated: return "Not generated"
-        case .pending: return "Awaiting supervisor"
-        case .approved: return "Approved - waiting for HR"
-        case .sentToHR: return "Delivered to HR"
+        case .notGenerated: return AppLocalization.text("Not generated")
+        case .pending: return AppLocalization.text("Awaiting supervisor")
+        case .approved: return AppLocalization.text("Approved - waiting for HR")
+        case .sentToHR: return AppLocalization.text("Delivered to HR")
         }
     }
 }

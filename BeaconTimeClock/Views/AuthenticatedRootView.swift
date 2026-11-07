@@ -71,9 +71,18 @@ struct AuthenticatedRootView: View {
                 .tabItem {
                     Label(
                         "Schedules",
-                        systemImage: "calendar.badge.gearshape"
+                        systemImage: "calendar"
                     )
                 }
+            }
+
+            // Payroll records are private: employees and ordinary supervisors
+            // cannot enter this tab. The backend independently checks the role.
+            if profile.canAccessPayroll {
+                HRPayrollView(profile: profile, api: services.api)
+                    .tabItem {
+                        Label("HR Payroll", systemImage: "doc.text")
+                    }
             }
 
             AccountView(profile: profile)

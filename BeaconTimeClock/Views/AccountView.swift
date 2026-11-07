@@ -41,7 +41,7 @@ struct AccountView: View {
                 Section("Company Access") {
                     LabeledContent(
                         "Role",
-                        value: profile.role.rawValue.capitalized
+                        value: AppLocalization.text(profile.role == .hr ? "HR" : profile.role.rawValue.capitalized)
                     )
 
                     if let department = profile.department {
@@ -57,6 +57,10 @@ struct AccountView: View {
                             value: number
                         )
                     }
+                }
+
+                Section("Language") {
+                    LanguagePreferencePicker()
                 }
 
                 Section {

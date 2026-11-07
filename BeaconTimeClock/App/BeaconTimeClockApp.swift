@@ -6,6 +6,7 @@ import UIKit
 @main
 // This type groups related state and behavior under a clear responsibility.
 struct BeaconTimeClockApp: App {
+    @AppStorage(AppLocalization.storageKey) private var languageCode = AppLanguage.english.rawValue
     private let modelContainer: ModelContainer
 
     // SwiftUI owns and preserves this observable object across view redraws.
@@ -74,6 +75,7 @@ struct BeaconTimeClockApp: App {
         // Each launched app window starts with this root view and injected dependencies.
         WindowGroup {
             RootView()
+                .environment(\.locale, Locale(identifier: languageCode))
                 .tint(CSCTheme.blue)
                 .environmentObject(authManager)
                 .environmentObject(services)

@@ -150,6 +150,9 @@ struct TimeCardsView: View {
     private func dateText(_ value: Date) -> String {
         let formatter = DateFormatter()
         formatter.timeZone = companyCalendar.timeZone
+        formatter.locale = Locale(identifier: UserDefaults.standard.string(
+            forKey: AppLocalization.storageKey
+        ) ?? AppLanguage.english.rawValue)
         formatter.dateFormat = "EEE, MMM d"
         return formatter.string(from: value)
     }

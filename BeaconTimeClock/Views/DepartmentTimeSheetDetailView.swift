@@ -144,8 +144,7 @@ struct DepartmentTimesheetDetailView:
                 .isEmpty
             {
                 Text(
-                    viewModel
-                        .successMessage
+                    AppLocalization.text(viewModel.successMessage)
                 )
                 .foregroundStyle(
                     .green

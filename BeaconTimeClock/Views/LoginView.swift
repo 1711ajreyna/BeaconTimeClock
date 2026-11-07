@@ -29,6 +29,10 @@ struct LoginView: View {
                     // Choose the explicit demo path; production must use real backend controls.
                     if AppConfig.demoMode { demoCredentials }
 
+                    CSCCard {
+                        LanguagePreferencePicker()
+                    }
+
                     Text("RELIABLE  ·  FUNCTIONAL  ·  SUSTAINABLE")
                         .font(.system(size: 10, weight: .semibold))
                         .tracking(1.7)
@@ -192,7 +196,9 @@ struct LoginView: View {
     }
 
     private func demoButton(_ label: String, email: String, id: String) -> some View {
-        Button(label) { fillDemo(email) }
+        Button { fillDemo(email) } label: {
+            Text(AppLocalization.text(label))
+        }
             .buttonStyle(.bordered)
             .frame(maxWidth: .infinity)
             // Stable accessibility ID allows repeatable XCUITest element lookup.

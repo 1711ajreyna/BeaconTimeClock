@@ -33,6 +33,29 @@ struct HRPayrollView: View {
                         description: Text("Only HR and administrators can view payroll details.")
                     )
                 } else {
+                    // The demo button prepares the simulated signed packets and
+                    // opens the combined PDF in a single, discoverable action.
+                    // It cannot submit payroll or approve production records.
+                    if AppConfig.demoMode {
+                        Section("Demo PDF Preview") {
+                            Button {
+                                Task {
+                                    await viewModel.prepareSample()
+                                    if viewModel.canExport {
+                                        generatePDF(for: nil)
+                                    }
+                                }
+                            } label: {
+                                Label("Preview Demo Payroll PDF", systemImage: "doc.richtext")
+                            }
+                            .disabled(viewModel.isLoading)
+                            .accessibilityIdentifier("preview_demo_payroll_pdf_button")
+
+                            Text("Generates five simulated, signed example forms for class demonstrations only. No real payroll is sent or approved.")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
                     if let packet = viewModel.packet {
                         Section("Pay Period") {
                             LabeledContent("Week", value:
@@ -56,8 +79,8 @@ struct HRPayrollView: View {
                                         .foregroundStyle(sheet.status == .pending ? .orange : .green)
                                         .font(.caption)
                                 }
-                                Text("\(sheet.employees.count) employees · " +
-                                     String(format: "Regular %.2f / OT %.2f / Total %.2f",
+                                Text("\(sheet.employees.count) \(AppLocalization.text("employees")) · " +
+                                     String(format: AppLocalization.text("Regular %.2f / OT %.2f / Total %.2f"),
                                             sheet.regularHours, sheet.overtimeHours, sheet.totalHours))
                                     .font(.caption).monospacedDigit()
 
@@ -65,7 +88,11 @@ struct HRPayrollView: View {
                                 Button {
                                     generatePDF(for: sheet.department)
                                 } label: {
-                                    Label("Open \(sheet.department.displayName) Form", systemImage: "doc.richtext")
+                                    Label {
+                                        Text("\(AppLocalization.text("Open")) \(sheet.department.displayName) \(AppLocalization.text("Form"))")
+                                    } icon: {
+                                        Image(systemName: "doc.richtext")
+                                    }
                                 }
                                 .disabled(!viewModel.canExport)
                             }
@@ -88,17 +115,6 @@ struct HRPayrollView: View {
                         }
                         Text("Each department begins on its OWN payroll-entry form, with individual daily punch detail pages afterward. PDF export is not an ADP/payroll submission.")
                             .font(.caption).foregroundStyle(.secondary)
-                    }
-
-                    // Choose the explicit demo path; production must use real backend controls.
-                    if AppConfig.demoMode {
-                        Section("Demonstration Only") {
-                            Button("Prepare Five Signed Example Packets") {
-                                Task { await viewModel.prepareSample() }
-                            }
-                            Text("Creates clearly labeled simulated approvals to preview the PDFs. Does not send email, approve real work, or mark payroll complete.")
-                                .font(.caption).foregroundStyle(.secondary)
-                        }
                     }
 
                     if !viewModel.canExport && !viewModel.isLoading {

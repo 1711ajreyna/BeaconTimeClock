@@ -12,9 +12,9 @@ enum RestBreakSlot: String, Codable, CaseIterable, Identifiable, Hashable {
     var displayName: String {
         switch self {
         case .first:
-            return "Rest Break 1"
+            return AppLocalization.text("Rest Break 1")
         case .second:
-            return "Rest Break 2"
+            return AppLocalization.text("Rest Break 2")
         }
     }
 }
