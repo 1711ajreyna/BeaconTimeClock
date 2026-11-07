@@ -1,6 +1,9 @@
+// FILE PURPOSE: Supervisor-facing employee schedules and rest-break edit navigation.
 import SwiftUI
 
+// This type groups related state and behavior under a clear responsibility.
 struct SupervisorScheduleView: View {
+    // SwiftUI owns and preserves this observable object across view redraws.
     @StateObject
     private var viewModel:
         SupervisorScheduleViewModel
@@ -9,6 +12,7 @@ struct SupervisorScheduleView: View {
     private var editingRow:
         SupervisorScheduleRow?
 
+    // Create this object with the dependencies or state it needs; avoid hidden global services.
     init(
         viewModel:
             SupervisorScheduleViewModel
@@ -20,9 +24,14 @@ struct SupervisorScheduleView: View {
             )
     }
 
+    // The SwiftUI body describes the visible screen from the current state.
     var body: some View {
+        // Maintain a navigation path and allow drill-down screens.
         NavigationStack {
             List {
+                Section {
+                    BrandHeaderView(subtitle: "Shift Schedules")
+                }
                 if let response =
                     viewModel.response
                 {
@@ -87,15 +96,19 @@ struct SupervisorScheduleView: View {
                     )
                 }
             }
+            .cscListStyle()
             .navigationTitle(
                 "Shift Schedules"
             )
+            // Enable pull-to-refresh without duplicating API logic.
             .refreshable {
                 await viewModel.load()
             }
+            // Start asynchronous work when SwiftUI presents this view; handle loading and errors.
             .task {
                 await viewModel.load()
             }
+            // Open a modal editor while keeping its state owned by the parent view.
             .sheet(
                 item:
                     $editingRow
@@ -232,6 +245,7 @@ struct SupervisorScheduleView: View {
                 .buttonStyle(
                     .bordered
                 )
+                // Stable accessibility ID allows repeatable XCUITest element lookup.
                 .accessibilityIdentifier(
                     "edit_breaks_\(row.employeeNumber)_button"
                 )
@@ -306,6 +320,7 @@ struct SupervisorScheduleView: View {
         }
     }
 
+    // Convert a date/timer into a human-readable label.
     private func format(
         _ date: Date
     ) -> String {

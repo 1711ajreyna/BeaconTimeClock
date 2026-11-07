@@ -1,5 +1,8 @@
+// FILE PURPOSE: Employee schedules, rest-break events and shift-notification data.
+
 import Foundation
 
+// This type groups related state and behavior under a clear responsibility.
 enum RestBreakSlot: String, Codable, CaseIterable, Identifiable, Hashable {
     case first
     case second
@@ -16,6 +19,7 @@ enum RestBreakSlot: String, Codable, CaseIterable, Identifiable, Hashable {
     }
 }
 
+// This type groups related state and behavior under a clear responsibility.
 enum ShiftEventType: String, Codable, CaseIterable, Hashable {
     /// A "started" event is also the employee's acceptance of the scheduled
     /// paid rest break.
@@ -47,6 +51,7 @@ enum ShiftEventType: String, Codable, CaseIterable, Hashable {
     }
 }
 
+// This type groups related state and behavior under a clear responsibility.
 struct ShiftEventRecord: Codable, Hashable, Identifiable {
     let id: UUID
     let type: ShiftEventType
@@ -56,6 +61,7 @@ struct ShiftEventRecord: Codable, Hashable, Identifiable {
     let note: String?
 }
 
+// This type groups related state and behavior under a clear responsibility.
 struct ShiftSchedule: Codable, Hashable, Identifiable {
     let id: UUID
     let employeeID: UUID
@@ -106,6 +112,7 @@ struct ShiftSchedule: Codable, Hashable, Identifiable {
     }
 }
 
+// This type groups related state and behavior under a clear responsibility.
 struct MyShiftResponse: Codable, Hashable {
     let schedule: ShiftSchedule
     let events: [ShiftEventRecord]
@@ -114,6 +121,7 @@ struct MyShiftResponse: Codable, Hashable {
     let projectedOvertimeHours: Double
 }
 
+// This type groups related state and behavior under a clear responsibility.
 struct RecordShiftEventRequest: Codable {
     let shiftAssignmentID: UUID
     let type: ShiftEventType
@@ -122,12 +130,14 @@ struct RecordShiftEventRequest: Codable {
     let note: String?
 }
 
+// This type groups related state and behavior under a clear responsibility.
 struct RecordShiftEventResponse: Codable {
     let success: Bool
     let event: ShiftEventRecord
     let message: String?
 }
 
+// This type groups related state and behavior under a clear responsibility.
 struct SupervisorScheduleRow: Codable, Hashable, Identifiable {
     let id: UUID
     let employeeID: UUID
@@ -161,11 +171,13 @@ struct SupervisorScheduleRow: Codable, Hashable, Identifiable {
     }
 }
 
+// This type groups related state and behavior under a clear responsibility.
 struct SupervisorScheduleResponse: Codable, Hashable {
     let workDate: String
     let rows: [SupervisorScheduleRow]
 }
 
+// This type groups related state and behavior under a clear responsibility.
 struct UpdateShiftScheduleRequest: Codable {
     let shiftAssignmentID: UUID
     let break1Start: Date
@@ -174,12 +186,14 @@ struct UpdateShiftScheduleRequest: Codable {
     let break2AdjustmentReason: String?
 }
 
+// This type groups related state and behavior under a clear responsibility.
 struct UpdateShiftScheduleResponse: Codable {
     let success: Bool
     let row: SupervisorScheduleRow
     let message: String?
 }
 
+// This type groups related state and behavior under a clear responsibility.
 struct ShiftNotificationPlan: Equatable {
     let break1StartWarning: Date
     let lunchWarning: Date

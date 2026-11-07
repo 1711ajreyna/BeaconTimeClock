@@ -1,4 +1,4 @@
-
+// FILE PURPOSE: Signed-in user identity, role and department-scope helpers.
 import Foundation
 
 // MARK: - User Roles
@@ -7,6 +7,7 @@ import Foundation
 ///
 /// Roles determine which features employees, supervisors,
 /// HR personnel, and administrators can access.
+// This type groups related state and behavior under a clear responsibility.
 enum UserRole: String, Codable, Hashable {
 
     case employee
@@ -47,6 +48,7 @@ enum UserRole: String, Codable, Hashable {
 /// Hashable: Allows profiles to be compared and stored in sets.
 /// Identifiable: Provides a unique ID for SwiftUI.
 
+// This type groups related state and behavior under a clear responsibility.
 struct UserProfile: Codable, Hashable, Identifiable {
 
     // MARK: - Identity
@@ -81,3 +83,20 @@ struct UserProfile: Codable, Hashable, Identifiable {
     let department: Department?
 }
 
+
+
+// MARK: - Single-department supervisor permissions
+extension UserProfile {
+    /// UI/demo convenience only. The production backend must recheck the JWT,
+    /// role, and supervisor_departments assignment on EVERY sensitive request.
+    // Allow a supervisor their department only; HR/admin have broader access.
+    func canManageDepartment(_ target: Department) -> Bool {
+        switch role {
+        case .employee: return false
+        case .supervisor: return department == target
+        case .hr, .admin: return true
+        }
+    }
+
+    var canAccessPayroll: Bool { role == .hr || role == .admin }
+}

@@ -1,9 +1,11 @@
+// FILE PURPOSE: Named work-shift and employee-assignment models for shift rosters.
 import Foundation
 
 // MARK: - Named Work Shift
 
 /// A supervisor-created, dated shift for one department.
 /// Absolute Date values allow night shifts to finish the following day.
+// This type groups related state and behavior under a clear responsibility.
 struct WorkShift: Identifiable, Codable, Hashable {
     let id: UUID // Unique database ID for this shift.
     let name: String // e.g., "Morning", "Evening", "Night".
@@ -25,6 +27,7 @@ struct WorkShift: Identifiable, Codable, Hashable {
     /// The current employee screen supports exactly two rest-break slots.
     /// New templates are limited to a standard 8 paid-hour day until we build
     /// configurable rest-break counts for short/extended shifts.
+    // Construct an appropriately dated work shift, including overnight endings.
     static func makeEightHourShift(
         name: String,
         department: Department,
@@ -78,6 +81,7 @@ struct WorkShift: Identifiable, Codable, Hashable {
         )
     }
 
+    // This type groups related state and behavior under a clear responsibility.
     enum ShiftError: LocalizedError {
         case unsupportedDuration
         var errorDescription: String? {
@@ -89,6 +93,7 @@ struct WorkShift: Identifiable, Codable, Hashable {
 // MARK: - Roster / Employee Assignments
 
 /// One employee scheduled to work one named shift.
+// This type groups related state and behavior under a clear responsibility.
 struct WorkShiftAssignment: Identifiable, Codable, Hashable {
     let id: UUID // Unique assignment ID.
     let employeeID: UUID // Employee database ID.
@@ -98,6 +103,7 @@ struct WorkShiftAssignment: Identifiable, Codable, Hashable {
 }
 
 /// One network response includes shifts, assigned people, and available staff.
+// This type groups related state and behavior under a clear responsibility.
 struct ShiftRosterResponse: Codable {
     let shifts: [WorkShift]
     let assignments: [WorkShiftAssignment]
@@ -105,6 +111,7 @@ struct ShiftRosterResponse: Codable {
 }
 
 /// Minimal employee data needed by the assignment picker.
+// This type groups related state and behavior under a clear responsibility.
 struct RosterEmployee: Identifiable, Codable, Hashable {
     let id: UUID
     let employeeNumber: String
@@ -115,17 +122,20 @@ struct RosterEmployee: Identifiable, Codable, Hashable {
 // MARK: - API Contracts
 
 /// Request to create one named shift in the chosen department/date.
+// This type groups related state and behavior under a clear responsibility.
 struct CreateWorkShiftRequest: Codable {
     let shift: WorkShift
 }
 
 /// Request to add an employee to a specific named shift.
+// This type groups related state and behavior under a clear responsibility.
 struct AssignWorkShiftRequest: Codable {
     let shiftID: UUID
     let employeeID: UUID
 }
 
 /// Request to remove an assignment without deleting the employee.
+// This type groups related state and behavior under a clear responsibility.
 struct RemoveWorkShiftAssignmentRequest: Codable {
     let assignmentID: UUID
 }

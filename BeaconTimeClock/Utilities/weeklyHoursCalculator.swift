@@ -1,11 +1,14 @@
+// FILE PURPOSE: Hours calculations for example weekly totals and their display.
 import Foundation
 
 /// Shared calculation helpers used by demo mode and unit tests.
 ///
 /// The production backend repeats the same concept server-side so payroll
 /// totals cannot be trusted solely to the phone.
+// This type groups related state and behavior under a clear responsibility.
 enum WeeklyHoursCalculator {
 
+    // This type groups related state and behavior under a clear responsibility.
     struct Split: Equatable {
         let regular: Double
         let overtime: Double
@@ -15,6 +18,7 @@ enum WeeklyHoursCalculator {
     /// Simple weekly threshold used by the capstone/demo display.
     ///
     /// Actual payroll deployment should use HR-approved rules and configuration.
+    // Separate regular and overtime example hours for display.
     static func split(
         totalHours: Double,
         regularLimit: Double = AppConfig.demoWeeklyRegularLimitHours
@@ -35,6 +39,7 @@ enum WeeklyHoursCalculator {
     /// Adds paid hours from concrete shift intervals; the subtraction is
     /// strictly for unpaid meals, never for paid 10-minute rest breaks.
     /// This is an educational projection, NOT a California payroll engine.
+    // Estimate payable hours based on scheduled shift and unpaid lunch.
     static func projectedPaidHours(
         shifts: [WorkShift]
     ) -> Double {
@@ -48,6 +53,7 @@ enum WeeklyHoursCalculator {
         })
     }
 
+    // Round hours consistently for the UI presentation.
     static func rounded(_ value: Double) -> Double {
         (value * 100).rounded() / 100
     }
@@ -55,6 +61,7 @@ enum WeeklyHoursCalculator {
 
 /// Testable status used by SwiftUI to decide whether the hours should appear
 /// green or red.
+// This type groups related state and behavior under a clear responsibility.
 enum HoursIndicator: Equatable {
     case withinRegularLimit
     case overtime
@@ -67,4 +74,3 @@ enum HoursIndicator: Equatable {
             : .withinRegularLimit
     }
 }
-

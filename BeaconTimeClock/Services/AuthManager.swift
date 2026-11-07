@@ -1,18 +1,27 @@
+// FILE PURPOSE: Handles demo login, real authentication sessions and sign-out.
 import Foundation
 import Supabase
 
+// UI-observed state and these operations run on the main actor.
 @MainActor
+// This type groups related state and behavior under a clear responsibility.
 final class AuthManager: ObservableObject {
+    // This type groups related state and behavior under a clear responsibility.
     enum State: Equatable {
         case checking
         case signedOut
         case signedIn
     }
 
+    // Notify SwiftUI subscribers whenever this stored state changes.
     @Published private(set) var state: State = .checking
+    // Notify SwiftUI subscribers whenever this stored state changes.
     @Published private(set) var userID: UUID?
+    // Notify SwiftUI subscribers whenever this stored state changes.
     @Published private(set) var email: String?
+    // Notify SwiftUI subscribers whenever this stored state changes.
     @Published var errorMessage = ""
+    // Notify SwiftUI subscribers whenever this stored state changes.
     @Published var isWorking = false
 
     private let supabase: SupabaseClient?
@@ -21,6 +30,7 @@ final class AuthManager: ObservableObject {
     private let demoSessionEmailKey =
         "BeaconTimeClock.demoSessionEmail"
 
+    // Create this object with the dependencies or state it needs; avoid hidden global services.
     init(
         supabase: SupabaseClient?
     ) {
@@ -31,7 +41,9 @@ final class AuthManager: ObservableObject {
         authListenerTask?.cancel()
     }
 
+    // Restore a saved session or determine whether login is required.
     func bootstrap() async {
+        // Choose the explicit demo path; production must use real backend controls.
         if AppConfig.demoMode {
             if let savedEmail = UserDefaults.standard.string(
                 forKey: demoSessionEmailKey
@@ -74,6 +86,7 @@ final class AuthManager: ObservableObject {
         }
     }
 
+    // Authenticate the entered account; demo accounts are only for local testing.
     func signIn(
         email: String,
         password: String
@@ -82,6 +95,7 @@ final class AuthManager: ObservableObject {
         defer { isWorking = false }
         errorMessage = ""
 
+        // Choose the explicit demo path; production must use real backend controls.
         if AppConfig.demoMode {
             guard password == AppConfig.demoPassword,
                   Self.demoRole(for: email) != nil else {
@@ -116,10 +130,12 @@ final class AuthManager: ObservableObject {
         }
     }
 
+    // Clear the session so protected views are no longer displayed.
     func signOut() async {
         isWorking = true
         defer { isWorking = false }
 
+        // Choose the explicit demo path; production must use real backend controls.
         if AppConfig.demoMode {
             UserDefaults.standard.removeObject(
                 forKey: demoSessionEmailKey
@@ -141,7 +157,9 @@ final class AuthManager: ObservableObject {
         state = .signedOut
     }
 
+    // Obtain a short-lived token for authenticated API calls.
     func accessToken() async -> String? {
+        // Choose the explicit demo path; production must use real backend controls.
         if AppConfig.demoMode {
             return "demo-access-token"
         }
@@ -167,7 +185,7 @@ final class AuthManager: ObservableObject {
             role: role,
             employeeID: role == .employee ? Self.demoEmployeeID : nil,
             employeeNumber: role == .employee ? "EMP-001" : nil,
-            department: role == .employee ? .electrical : nil
+            department: role == .employee ? .electrical : Self.demoDepartment(for: email)
         )
     }
 
@@ -209,12 +227,31 @@ final class AuthManager: ObservableObject {
         switch email.lowercased() {
         case AppConfig.demoEmployeeEmail:
             return .employee
-        case AppConfig.demoSupervisorEmail:
+        case AppConfig.demoSupervisorEmail,
+             AppConfig.demoMachineShopSupervisorEmail,
+             AppConfig.demoMetalsSupervisorEmail,
+             AppConfig.demoPlasticsSupervisorEmail,
+             AppConfig.demoLithoSupervisorEmail:
             return .supervisor
         case AppConfig.demoAdminEmail:
             return .admin
+        case AppConfig.demoHREmail:
+            return .hr
         default:
             return nil
+        }
+    }
+
+    /// Demo supervisor's assignment comes from a known local login, not a
+    /// department text field. Production assignment must be server-verified.
+    private static func demoDepartment(for email: String) -> Department? {
+        switch email.lowercased() {
+        case AppConfig.demoSupervisorEmail: return .electrical
+        case AppConfig.demoMachineShopSupervisorEmail: return .machineShop
+        case AppConfig.demoMetalsSupervisorEmail: return .metals
+        case AppConfig.demoPlasticsSupervisorEmail: return .plastics
+        case AppConfig.demoLithoSupervisorEmail: return .litho
+        default: return nil
         }
     }
 
@@ -240,9 +277,13 @@ final class AuthManager: ObservableObject {
         case .employee:
             return demoEmployeeID
         case .supervisor:
-            return UUID(
-                uuidString: "22222222-2222-2222-2222-222222222222"
-            )!
+            let department = demoDepartment(for: email) ?? .electrical
+            return UUID(uuidString: String(
+                format: "22222222-2222-2222-2222-%012d",
+                department.sortOrder + 1
+            ))!
+        case .hr:
+            return UUID(uuidString: "44444444-4444-4444-4444-444444444444")!
         case .admin:
             return UUID(
                 uuidString: "33333333-3333-3333-3333-333333333333"

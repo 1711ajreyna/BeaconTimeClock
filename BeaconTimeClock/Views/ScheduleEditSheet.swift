@@ -1,3 +1,4 @@
+// FILE PURPOSE: Supervisor editing sheet for scheduled employee rest breaks.
 import SwiftUI
 
 /// Individual employee rest-break editor.
@@ -10,6 +11,7 @@ import SwiftUI
 /// 3. requires a reason when moving away from the recommendation,
 /// 4. refuses schedules that place the first break outside the first work
 ///    period or the second break outside the second work period.
+// This type groups related state and behavior under a clear responsibility.
 struct ScheduleEditSheet: View {
     let row:
         SupervisorScheduleRow
@@ -37,6 +39,7 @@ struct ScheduleEditSheet: View {
     @State
     private var break2Reason: String
 
+    // Create this object with the dependencies or state it needs; avoid hidden global services.
     init(
         row:
             SupervisorScheduleRow,
@@ -79,7 +82,9 @@ struct ScheduleEditSheet: View {
             )
     }
 
+    // The SwiftUI body describes the visible screen from the current state.
     var body: some View {
+        // Maintain a navigation path and allow drill-down screens.
         NavigationStack {
             Form {
                 employeeSection
@@ -426,6 +431,7 @@ struct ScheduleEditSheet: View {
             : result
     }
 
+    // Convert a date/timer into a human-readable label.
     private func format(
         _ date: Date
     ) -> String {

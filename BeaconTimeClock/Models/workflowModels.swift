@@ -1,5 +1,7 @@
+// FILE PURPOSE: Supervisor approval summaries, timesheets, employee totals and audit records.
 import Foundation
 
+// This type groups related state and behavior under a clear responsibility.
 enum ApprovalStatus: String, Codable, Hashable {
     case pending
     case approved
@@ -14,12 +16,14 @@ enum ApprovalStatus: String, Codable, Hashable {
     }
 }
 
+// This type groups related state and behavior under a clear responsibility.
 enum HRPacketStatus: String, Codable, Hashable {
     case waitingForDepartments = "waiting_for_departments"
     case ready
     case emailed
 }
 
+// This type groups related state and behavior under a clear responsibility.
 struct DepartmentApprovalSummary: Identifiable, Codable, Hashable {
     let id: UUID
     let department: Department
@@ -33,6 +37,7 @@ struct DepartmentApprovalSummary: Identifiable, Codable, Hashable {
     let canEdit: Bool
 }
 
+// This type groups related state and behavior under a clear responsibility.
 struct SupervisorDashboard: Codable, Hashable {
     let weekStart: String
     let weekEnd: String
@@ -51,6 +56,7 @@ struct SupervisorDashboard: Codable, Hashable {
     }
 }
 
+// This type groups related state and behavior under a clear responsibility.
 struct PunchRecord: Identifiable, Codable, Hashable {
     let id: UUID
     let type: PunchType
@@ -66,6 +72,7 @@ struct PunchRecord: Identifiable, Codable, Hashable {
 }
 
 /// Rest-break activity is displayed beside time punches in the weekly packet.
+// This type groups related state and behavior under a clear responsibility.
 struct WeeklyShiftEventRecord: Identifiable, Codable, Hashable {
     let id: UUID
     let type: ShiftEventType
@@ -79,6 +86,7 @@ struct WeeklyShiftEventRecord: Identifiable, Codable, Hashable {
     }
 }
 
+// This type groups related state and behavior under a clear responsibility.
 struct EmployeeWeeklySummary: Identifiable, Codable, Hashable {
     let id: UUID
     let employeeID: String
@@ -95,6 +103,7 @@ struct EmployeeWeeklySummary: Identifiable, Codable, Hashable {
     }
 }
 
+// This type groups related state and behavior under a clear responsibility.
 struct DepartmentTimesheet: Identifiable, Codable, Hashable {
     let id: UUID
     let department: Department
@@ -130,4 +139,4 @@ struct DepartmentTimesheet: Identifiable, Codable, Hashable {
     var hasBreakExceptions: Bool {
         employees.contains { $0.hasBreakException }
     }
-}                                                                                                                                           
+}

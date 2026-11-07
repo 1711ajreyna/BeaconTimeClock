@@ -1,8 +1,12 @@
+// FILE PURPOSE: Tracks and formats a lunch countdown with notification integration.
 import Foundation
 import UserNotifications
 
+// UI-observed state and these operations run on the main actor.
 @MainActor
+// This type groups related state and behavior under a clear responsibility.
 final class LunchTimerManager: ObservableObject {
+    // Notify SwiftUI subscribers whenever this stored state changes.
     @Published private(set) var secondsRemaining = 0
     
     private var endDate: Date?

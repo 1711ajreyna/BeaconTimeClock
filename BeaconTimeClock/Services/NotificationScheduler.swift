@@ -1,7 +1,10 @@
+// FILE PURPOSE: Schedules and cancels local reminders for shifts, meals and rest breaks.
 import Foundation
 import UserNotifications
 
+// UI-observed state and these operations run on the main actor.
 @MainActor
+// This type groups related state and behavior under a clear responsibility.
 final class NotificationScheduler {
     private let center =
         UNUserNotificationCenter.current()
@@ -23,6 +26,7 @@ final class NotificationScheduler {
         }
     }
 
+    // Create local reminders for an employee's assigned schedule.
     func scheduleShiftWarnings(
         for schedule: ShiftSchedule
     ) async {
@@ -78,6 +82,7 @@ final class NotificationScheduler {
         )
     }
 
+    // Schedule a rest-break end reminder relative to its start.
     func scheduleBreakCountdown(
         slot: RestBreakSlot,
         minutes: Int
@@ -126,6 +131,7 @@ final class NotificationScheduler {
         )
     }
 
+    // Cancel obsolete notifications after a break finishes.
     func cancelBreakCountdown(
         slot: RestBreakSlot
     ) {
@@ -142,6 +148,7 @@ final class NotificationScheduler {
             )
     }
 
+    // Remove earlier shift reminders when the schedule changes.
     func cancelShiftWarnings() async {
         let pending =
             await center

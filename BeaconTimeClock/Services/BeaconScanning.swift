@@ -1,5 +1,7 @@
+// FILE PURPOSE: Protocol/interface allowing real beacon scanning and a demo scanner to be swapped.
 import Foundation
 
+// This type groups related state and behavior under a clear responsibility.
 struct BeaconObservation: Equatable, Sendable {
     let detected: Bool
     let rssi: Int
@@ -10,6 +12,7 @@ struct BeaconObservation: Equatable, Sendable {
 ///
 ///  Android can implement the same conceptual contract using kotlin and the
 ///  Android Beacon Library / BluetooLeScanner without changing the backend logic.
+// UI-observed state and these operations run on the main actor.
 @MainActor
 protocol BeaconScanning: AnyObject {
     var observationHandler: ((BeaconObservation) -> Void)? { get set }

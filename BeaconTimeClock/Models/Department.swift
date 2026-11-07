@@ -1,9 +1,12 @@
+// FILE PURPOSE: Canonical department names and backend-safe identifiers.
+
 import Foundation
 // This file provides the Models layer used by the larger BeaconTimeClock workflow
 
 /// The Five departments participating in the weekly approval workflow.
 ///
 /// Raw values match the backend database enum values.
+// This type groups related state and behavior under a clear responsibility.
 enum Department: String, Codable, CaseIterable, Identifiable, Hashable {
     case electrical = "electrical"
     case machineShop = "machine_shop"

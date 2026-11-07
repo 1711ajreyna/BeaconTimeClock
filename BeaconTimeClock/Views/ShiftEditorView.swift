@@ -1,7 +1,9 @@
+// FILE PURPOSE: Form for creating named morning/evening/night work shifts.
 import SwiftUI
 
 /// Creates a dated eight-paid-hour shift. Breaks are calculated automatically.
 /// The current UI supports two paid rest breaks, not arbitrary shift lengths.
+// This type groups related state and behavior under a clear responsibility.
 struct ShiftEditorView: View {
     // MARK: - Input Fields
     @Environment(\.dismiss) private var dismiss
@@ -15,11 +17,14 @@ struct ShiftEditorView: View {
 
     let onSave: (String, Department, Date, Int, Int, Int, Int) -> Void
 
+    // The SwiftUI body describes the visible screen from the current state.
     var body: some View {
+        // Maintain a navigation path and allow drill-down screens.
         NavigationStack {
             Form {
                 Section("Shift Details") {
                     TextField("Shift name", text: $name)
+                        // Stable accessibility ID allows repeatable XCUITest element lookup.
                         .accessibilityIdentifier("shift_name_field")
                     Picker("Department", selection: $department) {
                         ForEach(Department.allCases) { dep in
@@ -60,6 +65,7 @@ struct ShiftEditorView: View {
                                startHour, startMinute, endHour, endMinute)
                     }
                     .disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    // Stable accessibility ID allows repeatable XCUITest element lookup.
                     .accessibilityIdentifier("save_shift_button")
                 }
             }

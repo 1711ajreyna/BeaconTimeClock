@@ -1,17 +1,25 @@
+// FILE PURPOSE: SwiftUI app entry point: builds local persistence and injects shared service objects.
 import SwiftUI
 import SwiftData
 import UIKit
 
 @main
+// This type groups related state and behavior under a clear responsibility.
 struct BeaconTimeClockApp: App {
     private let modelContainer: ModelContainer
 
+    // SwiftUI owns and preserves this observable object across view redraws.
     @StateObject private var authManager: AuthManager
+    // SwiftUI owns and preserves this observable object across view redraws.
     @StateObject private var services: AppServices
+    // SwiftUI owns and preserves this observable object across view redraws.
     @StateObject private var timeCardStore: TimeCardStore
+    // SwiftUI owns and preserves this observable object across view redraws.
     @StateObject private var beaconManager = BeaconManager()
+    // SwiftUI owns and preserves this observable object across view redraws.
     @StateObject private var lunchTimer = LunchTimerManager()
 
+    // Create this object with the dependencies or state it needs; avoid hidden global services.
     init() {
         /// These launch arguments mirror the pattern used in the LoginKit
         /// XCUITest exercises from class.
@@ -31,8 +39,11 @@ struct BeaconTimeClockApp: App {
             )
             modelContainer = container
 
+            // Create the SDK client once and pass it into other services.
             let supabase = SupabaseClientProvider.make()
+            // Use one authentication manager across the app to avoid diverging login state.
             let auth = AuthManager(supabase: supabase)
+            // Select the real or demo API behind a shared interface.
             let api = APIClientFactory.make(auth: auth)
 
             _authManager = StateObject(
@@ -60,8 +71,10 @@ struct BeaconTimeClockApp: App {
     }
 
     var body: some Scene {
+        // Each launched app window starts with this root view and injected dependencies.
         WindowGroup {
             RootView()
+                .tint(CSCTheme.blue)
                 .environmentObject(authManager)
                 .environmentObject(services)
                 .environmentObject(timeCardStore)

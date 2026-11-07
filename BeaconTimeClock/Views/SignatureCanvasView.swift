@@ -1,3 +1,4 @@
+// FILE PURPOSE: PencilKit canvas and rendering of approval signatures.
 import SwiftUI
 import PencilKit
 import UIKit
@@ -5,6 +6,7 @@ import UIKit
 /// SwiftUI wrapper for Apple's PencilKit canvas.
 ///
 /// Supervisors may sign with a finger or Apple Pencil.
+// This type groups related state and behavior under a clear responsibility.
 struct SignatureCanvasView:
     UIViewRepresentable
 {
@@ -55,6 +57,7 @@ struct SignatureCanvasView:
         }
     }
 
+    // This type groups related state and behavior under a clear responsibility.
     final class Coordinator:
         NSObject,
         PKCanvasViewDelegate
@@ -62,6 +65,7 @@ struct SignatureCanvasView:
         @Binding
         var drawing: PKDrawing
 
+        // Create this object with the dependencies or state it needs; avoid hidden global services.
         init(
             drawing:
                 Binding<PKDrawing>
@@ -79,6 +83,7 @@ struct SignatureCanvasView:
 }
 
 /// Converts the vector PencilKit drawing into PNG bytes for the API.
+// This type groups related state and behavior under a clear responsibility.
 enum SignatureRenderer {
 
     static func pngData(

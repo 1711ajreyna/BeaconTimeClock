@@ -1,13 +1,22 @@
+// FILE PURPOSE: Loads employee schedules and handles rest-break event actions.
 import Foundation
 
+// UI-observed state and these operations run on the main actor.
 @MainActor
+// This type groups related state and behavior under a clear responsibility.
 final class MyShiftViewModel: ObservableObject {
+    // Notify SwiftUI subscribers whenever this stored state changes.
     @Published private(set) var response: MyShiftResponse?
+    // Notify SwiftUI subscribers whenever this stored state changes.
     @Published var errorMessage = ""
+    // Notify SwiftUI subscribers whenever this stored state changes.
     @Published var statusMessage = ""
+    // Notify SwiftUI subscribers whenever this stored state changes.
     @Published private(set) var isLoading = false
+    // Notify SwiftUI subscribers whenever this stored state changes.
     @Published private(set) var isWorking = false
 
+    // Dependency injection: tests can use a fake API and production can use real HTTP.
     private let api: WorkflowAPI
     private let beacon: BeaconManager
     private let biometric: BiometricManager
@@ -15,6 +24,7 @@ final class MyShiftViewModel: ObservableObject {
     let breakTimer: BreakTimerManager
 
     
+    // Create this object with the dependencies or state it needs; avoid hidden global services.
     init(
         api: WorkflowAPI,
         beacon: BeaconManager,
@@ -30,11 +40,13 @@ final class MyShiftViewModel: ObservableObject {
     }
 
 
+    // Refresh this screen from its API or local source of truth.
     func load() async {
         isLoading = true
         defer { isLoading = false }
 
         do {
+            // Await the workflow API instead of handling backend details directly in the ViewModel.
             let loaded = try await api.fetchMyShift()
             response = loaded
             errorMessage = ""
@@ -46,6 +58,7 @@ final class MyShiftViewModel: ObservableObject {
         }
     }
 
+    // Record that an employee accepted and began a paid rest break.
     func startBreak(_ slot: RestBreakSlot) async {
         guard let schedule = response?.schedule else {
             return
@@ -74,6 +87,7 @@ final class MyShiftViewModel: ObservableObject {
         }
     }
 
+    // Record the completion of an active paid rest break.
     func endBreak(_ slot: RestBreakSlot) async {
         guard let schedule = response?.schedule else {
             return
@@ -100,6 +114,7 @@ final class MyShiftViewModel: ObservableObject {
 
     /// "Not taken" is deliberately an exception event, not a legal waiver.
     /// The employee must biometrically acknowledge it.
+    // Record a rest-break exception that must be reviewed.
     func markBreakNotTaken(
         _ slot: RestBreakSlot
     ) async {
@@ -117,6 +132,7 @@ final class MyShiftViewModel: ObservableObject {
                 ? .restBreak1NotTaken
                 : .restBreak2NotTaken
 
+            // Await the workflow API instead of handling backend details directly in the ViewModel.
             let result = try await api.recordShiftEvent(
                 RecordShiftEventRequest(
                     shiftAssignmentID: schedule.id,
@@ -137,10 +153,12 @@ final class MyShiftViewModel: ObservableObject {
     /// In production, employees can respond to the offered rest break starting
     /// with the two-minute warning. Demo mode keeps actions available so the
     /// workflow can be shown in class at any time of day.
+    // Determine whether this break action is currently allowed.
     func canRespondToBreak(
         _ slot: RestBreakSlot,
         now: Date = Date()
     ) -> Bool {
+        // Choose the explicit demo path; production must use real backend controls.
         if AppConfig.demoMode {
             return true
         }
@@ -185,6 +203,7 @@ final class MyShiftViewModel: ObservableObject {
             now < closes
     }
 
+    // Derive available/in-progress/completed status from saved break events.
     func state(for slot: RestBreakSlot) -> BreakState {
         guard let events = response?.events else {
             return .available
@@ -227,6 +246,7 @@ final class MyShiftViewModel: ObservableObject {
         defer { isWorking = false }
 
         do {
+            // Await the workflow API instead of handling backend details directly in the ViewModel.
             let result = try await api.recordShiftEvent(
                 RecordShiftEventRequest(
                     shiftAssignmentID: schedule.id,

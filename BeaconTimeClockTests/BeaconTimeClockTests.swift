@@ -1,13 +1,8 @@
-//
-//  BeaconTimeClockTests.swift
-//  BeaconTimeClockTests
-//
-//  Created by Andrew Reyna on 10/17/26.
-//
-
+// FILE PURPOSE: XCTest coverage of app behavior.
 import XCTest
 @testable import BeaconTimeClock
 
+// This type groups related state and behavior under a clear responsibility.
 final class BeaconTimeClockTests: XCTestCase {
 
     override func setUpWithError() throws {

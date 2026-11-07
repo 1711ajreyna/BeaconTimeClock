@@ -1,11 +1,17 @@
+// FILE PURPOSE: Company approval progress plus links only to authorized department details.
 import SwiftUI
 
 /// Company-wide weekly approval dashboard.
 ///
 /// Every supervisor can see which departments still have not approved their
 /// packets. Editing remains restricted by `canEdit` from the backend.
+// This type groups related state and behavior under a clear responsibility.
 struct SupervisorPortalView: View {
 
+    // Read a shared dependency injected by BeaconTimeClockApp; do not create it here.
+    @EnvironmentObject private var services: AppServices
+
+    // SwiftUI owns and preserves this observable object across view redraws.
     @StateObject
     private var viewModel:
         SupervisorPortalViewModel
@@ -13,6 +19,7 @@ struct SupervisorPortalView: View {
     private let api:
         WorkflowAPI
 
+    // Create this object with the dependencies or state it needs; avoid hidden global services.
     init(
         viewModel:
             SupervisorPortalViewModel,
@@ -27,7 +34,9 @@ struct SupervisorPortalView: View {
         self.api = api
     }
 
+    // The SwiftUI body describes the visible screen from the current state.
     var body: some View {
+        // Maintain a navigation path and allow drill-down screens.
         NavigationStack {
             List {
                 Section {
@@ -96,7 +105,8 @@ struct SupervisorPortalView: View {
                         }
                     }
 
-                    if AppConfig.demoMode {
+                    // Choose the explicit demo path; production must use real backend controls.
+                    if AppConfig.demoMode && services.profile?.canAccessPayroll == true {
                         Section(
                             "Demonstration"
                         ) {
@@ -143,12 +153,15 @@ struct SupervisorPortalView: View {
                     }
                 }
             }
+            .cscListStyle()
             .navigationTitle(
                 "Supervisor"
             )
+            // Enable pull-to-refresh without duplicating API logic.
             .refreshable {
                 await viewModel.load()
             }
+            // Start asynchronous work when SwiftUI presents this view; handle loading and errors.
             .task {
                 await viewModel.load()
             }
@@ -236,6 +249,7 @@ private struct DepartmentStatusRow:
     let summary:
         DepartmentApprovalSummary
 
+    // The SwiftUI body describes the visible screen from the current state.
     var body: some View {
         VStack(
             alignment: .leading,

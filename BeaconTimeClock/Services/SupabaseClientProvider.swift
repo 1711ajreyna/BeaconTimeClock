@@ -1,6 +1,8 @@
+// FILE PURPOSE: Builds the Supabase SDK client from app configuration.
 import Foundation
 import Supabase
 
+// This type groups related state and behavior under a clear responsibility.
 enum SupabaseClientProvider {
     static func make() -> SupabaseClient? {
         guard !AppConfig.demoMode else {

@@ -1,9 +1,15 @@
+// FILE PURPOSE: Orchestrates clock button actions through beacon, biometrics, API and local cache.
 import Foundation
 
+// UI-observed state and these operations run on the main actor.
 @MainActor
+// This type groups related state and behavior under a clear responsibility.
 final class EmployeeClockViewModel: ObservableObject {
+    // Notify SwiftUI subscribers whenever this stored state changes.
     @Published var statusMessage = ""
+    // Notify SwiftUI subscribers whenever this stored state changes.
     @Published var showError = false
+    // Notify SwiftUI subscribers whenever this stored state changes.
     @Published var isProcessing = false
 
     private let profile: UserProfile
@@ -11,8 +17,10 @@ final class EmployeeClockViewModel: ObservableObject {
     private let beaconManager: BeaconManager
     private let lunchTimer: LunchTimerManager
     private let biometricManager: BiometricManager
+    // Dependency injection: tests can use a fake API and production can use real HTTP.
     private let api: WorkflowAPI
 
+    // Create this object with the dependencies or state it needs; avoid hidden global services.
     init(
         profile: UserProfile,
         store: TimeCardStore,
@@ -30,14 +38,18 @@ final class EmployeeClockViewModel: ObservableObject {
     }
 
     var nextExpectedPunch: PunchType {
-        guard let latest = store.latestPunch else {
+        guard let latest = store.latestPunch(
+            for: profile.employeeNumber ?? "UNKNOWN"
+        ) else {
             return .clockIn
         }
 
         switch latest.type {
+        // A clock-in changes which attendance event is valid next.
         case .clockIn: return .lunchOut
         case .lunchOut: return .lunchIn
         case .lunchIn: return .clockOut
+        // Clock-out completes the current punch sequence.
         case .clockOut: return .clockIn
         }
     }
@@ -86,6 +98,7 @@ final class EmployeeClockViewModel: ObservableObject {
             // Demo mode uses DemoAPIClient.
             // Production mode uses ProductionAPIClient.
 
+            // Await the workflow API instead of handling backend details directly in the ViewModel.
             let response = try await api.submitPunch(
                 SubmitPunchRequest(
 

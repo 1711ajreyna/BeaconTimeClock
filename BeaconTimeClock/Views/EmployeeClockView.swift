@@ -1,13 +1,19 @@
+// FILE PURPOSE: Employee time-clock interface, badge/status and punch buttons.
 import SwiftUI
 
+// This type groups related state and behavior under a clear responsibility.
 struct EmployeeClockView: View {
     let profile: UserProfile
 
+    // SwiftUI owns and preserves this observable object across view redraws.
     @StateObject private var viewModel: EmployeeClockViewModel
 
+    // Read a shared dependency injected by BeaconTimeClockApp; do not create it here.
     @EnvironmentObject private var beacon: BeaconManager
+    // Read a shared dependency injected by BeaconTimeClockApp; do not create it here.
     @EnvironmentObject private var lunch: LunchTimerManager
 
+    // Create this object with the dependencies or state it needs; avoid hidden global services.
     init(
         profile: UserProfile,
         viewModel: EmployeeClockViewModel
@@ -16,7 +22,9 @@ struct EmployeeClockView: View {
         _viewModel = StateObject(wrappedValue: viewModel)
     }
 
+    // The SwiftUI body describes the visible screen from the current state.
     var body: some View {
+        // Maintain a navigation path and allow drill-down screens.
         NavigationStack {
             ScrollView {
                 VStack(spacing: 18) {
@@ -40,14 +48,13 @@ struct EmployeeClockView: View {
                                 alignment: .leading
                             )
                             .padding()
-                            .background(
-                                .thinMaterial,
-                                in: RoundedRectangle(cornerRadius: 14)
-                            )
+                            .background(CSCTheme.surface, in: RoundedRectangle(cornerRadius: 16))
                     }
                 }
                 .padding()
             }
+            .background(CSCTheme.canvas)
+            .tint(CSCTheme.blue)
             .navigationTitle("Clock")
             .alert(
                 "Punch Not Recorded",
@@ -73,6 +80,7 @@ struct EmployeeClockView: View {
                     .foregroundStyle(.secondary)
             }
 
+            // Choose the explicit demo path; production must use real backend controls.
             if AppConfig.demoMode {
                 Label(
                     "Demonstration Mode",
@@ -83,10 +91,11 @@ struct EmployeeClockView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
-        .background(
-            .thinMaterial,
-            in: RoundedRectangle(cornerRadius: 14)
-        )
+        .background(CSCTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+        .overlay {
+            RoundedRectangle(cornerRadius: 16)
+                .strokeBorder(CSCTheme.border, lineWidth: 1)
+        }
     }
 
     private var beaconCard: some View {
@@ -120,10 +129,11 @@ struct EmployeeClockView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
-        .background(
-            .thinMaterial,
-            in: RoundedRectangle(cornerRadius: 14)
-        )
+        .background(CSCTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+        .overlay {
+            RoundedRectangle(cornerRadius: 16)
+                .strokeBorder(CSCTheme.border, lineWidth: 1)
+        }
     }
 
     private var lunchCard: some View {
@@ -142,10 +152,11 @@ struct EmployeeClockView: View {
         }
         .frame(maxWidth: .infinity)
         .padding()
-        .background(
-            .thinMaterial,
-            in: RoundedRectangle(cornerRadius: 14)
-        )
+        .background(CSCTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+        .overlay {
+            RoundedRectangle(cornerRadius: 16)
+                .strokeBorder(CSCTheme.border, lineWidth: 1)
+        }
     }
 
     private var punchButtons: some View {
@@ -170,6 +181,7 @@ struct EmployeeClockView: View {
                     .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
+                .tint(CSCTheme.blue)
                 .controlSize(.large)
                 .disabled(!viewModel.isAllowed(type))
             }

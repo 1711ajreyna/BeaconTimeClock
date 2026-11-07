@@ -1,10 +1,15 @@
+// FILE PURPOSE: Authentication gate: routes signed-out users to login and others into the app.
 import SwiftUI
 
 /// Authentication gate for the entire application.
+// This type groups related state and behavior under a clear responsibility.
 struct RootView: View {
+    // Read a shared dependency injected by BeaconTimeClockApp; do not create it here.
     @EnvironmentObject private var auth: AuthManager
+    // Read a shared dependency injected by BeaconTimeClockApp; do not create it here.
     @EnvironmentObject private var services: AppServices
 
+    // The SwiftUI body describes the visible screen from the current state.
     var body: some View {
         Group {
             switch auth.state {
@@ -27,12 +32,14 @@ struct RootView: View {
                     )
                 } else {
                     ProgressView("Loading company profile…")
+                        // Start asynchronous work when SwiftUI presents this view; handle loading and errors.
                         .task {
                             await services.loadProfile()
                         }
                 }
             }
         }
+        // Start asynchronous work when SwiftUI presents this view; handle loading and errors.
         .task {
             await auth.bootstrap()
             if auth.state == .signedIn {

@@ -1,8 +1,10 @@
+// FILE PURPOSE: Calendar and timezone helpers for company shifts and overnight work.
 import Foundation
 
 /// Converts dates between Beacon, the backend, and the employee's local screen.
 /// "Date" always represents an absolute instant. A Calendar/TimeZone decides
 /// what that instant looks like on a company schedule.
+// This type groups related state and behavior under a clear responsibility.
 enum DateFormatting {
 
     // MARK: - JSON Encoder
@@ -36,6 +38,7 @@ enum DateFormatting {
     }
 
     /// Converts the company-local date to the database-friendly YYYY-MM-DD key.
+    // Format a date in the company's Pacific timezone for grouping.
     static func companyDateKey(_ date: Date) -> String {
         let formatter = DateFormatter() // Create a date-only formatter.
         formatter.calendar = companyCalendar
@@ -46,6 +49,7 @@ enum DateFormatting {
 
     // MARK: - Build Shifts on a Specific Day
 
+    // This type groups related state and behavior under a clear responsibility.
     enum ShiftDateError: LocalizedError {
         case invalidLocalTime
 
@@ -56,6 +60,7 @@ enum DateFormatting {
 
     /// Builds an actual Date from a selected calendar day and a clock time.
     /// Example: Monday + 22:00 produces Monday at 10 PM Pacific.
+    // Resolve a company-local workday into an actual calendar date.
     static func companyDate(
         on workDate: Date,
         hour: Int,
@@ -83,6 +88,7 @@ enum DateFormatting {
 
     /// Creates a shift end when the supervisor selects only the clock time.
     /// If the end is at or before the start, the shift ends the following day.
+    // Handle end times that fall after midnight on overnight shifts.
     static func resolvedShiftEnd(
         start: Date,
         endHour: Int,

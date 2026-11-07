@@ -1,9 +1,10 @@
-
+// FILE PURPOSE: Request and response types for attendance punches, corrections and approvals.
 import Foundation
 
 // MARK: - Employee Punch API
 
 /// Information submitted when an employee clocks in or out.
+// This type groups related state and behavior under a clear responsibility.
 struct SubmitPunchRequest: Codable {
 
     /// Employee submitting the punch.
@@ -23,6 +24,7 @@ struct SubmitPunchRequest: Codable {
 }
 
 /// Response returned after the backend processes a punch.
+// This type groups related state and behavior under a clear responsibility.
 struct SubmitPunchResponse: Codable {
 
     /// Whether the operation succeeded.
@@ -47,6 +49,7 @@ struct SubmitPunchResponse: Codable {
 ///
 /// Existing property names are retained for
 /// compatibility with your other files.
+// This type groups related state and behavior under a clear responsibility.
 struct PunchAdjustmentRequest: Codable {
 
     /// Timesheet containing the punch.
@@ -63,6 +66,7 @@ struct PunchAdjustmentRequest: Codable {
 }
 
 /// Response after requesting a time correction.
+// This type groups related state and behavior under a clear responsibility.
 struct PunchAdjustmentResponse: Codable {
 
     let success: Bool
@@ -73,11 +77,7 @@ struct PunchAdjustmentResponse: Codable {
 
 /// Request submitted when a supervisor approves
 /// a department's weekly timesheet.
-
-// MARK: - Digital Approval
-
-/// Request submitted when a supervisor approves
-/// a department's weekly timesheet.
+// This type groups related state and behavior under a clear responsibility.
 struct ApproveDepartmentRequest: Codable {
 
     /// Identifies the department timesheet to approve.
@@ -95,6 +95,7 @@ struct ApproveDepartmentRequest: Codable {
 
 /// Response returned after a department approval.
 
+// This type groups related state and behavior under a clear responsibility.
 struct ApproveDepartmentResponse: Codable {
 
     /// Whether the approval succeeded.
@@ -112,4 +113,3 @@ struct ApproveDepartmentResponse: Codable {
     /// Optional confirmation message.
     let message: String?
 }
-

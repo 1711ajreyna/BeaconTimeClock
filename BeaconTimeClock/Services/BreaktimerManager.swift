@@ -1,8 +1,13 @@
+// FILE PURPOSE: Keeps a local rest-break countdown and status.
 import Foundation
 
+// UI-observed state and these operations run on the main actor.
 @MainActor
+// This type groups related state and behavior under a clear responsibility.
 final class BreakTimerManager: ObservableObject {
+    // Notify SwiftUI subscribers whenever this stored state changes.
     @Published private(set) var activeSlot: RestBreakSlot?
+    // Notify SwiftUI subscribers whenever this stored state changes.
     @Published private(set) var secondsRemaining = 0
 
     private var timer: Timer?

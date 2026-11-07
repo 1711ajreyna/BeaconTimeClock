@@ -1,9 +1,11 @@
+// FILE PURPOSE: Edit a punch timestamp and supply a mandatory audit reason.
 import SwiftUI
 
 /// Manual override editor for an incorrect clock-in/out/lunch punch.
 ///
 /// A reason is mandatory. The backend records an audit entry rather than
 /// overwriting the original time.
+// This type groups related state and behavior under a clear responsibility.
 struct PunchAdjustmentSheet: View {
 
     let punch: PunchRecord
@@ -18,6 +20,7 @@ struct PunchAdjustmentSheet: View {
     @State
     private var reason = ""
 
+    // Create this object with the dependencies or state it needs; avoid hidden global services.
     init(
         punch: PunchRecord,
         onSave:
@@ -35,7 +38,9 @@ struct PunchAdjustmentSheet: View {
             )
     }
 
+    // The SwiftUI body describes the visible screen from the current state.
     var body: some View {
+        // Maintain a navigation path and allow drill-down screens.
         NavigationStack {
             Form {
                 Section(

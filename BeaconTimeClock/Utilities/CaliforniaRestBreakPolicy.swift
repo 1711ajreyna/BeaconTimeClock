@@ -1,3 +1,4 @@
+// FILE PURPOSE: Break-time recommendations and validation rules for the app workflow.
 import Foundation
 
 /// Scheduling helper for the capstone's California manufacturing workflow.
@@ -11,16 +12,19 @@ import Foundation
 /// legally compliant. It gives the app safe defaults and prevents obviously
 /// invalid schedules such as placing Rest Break 1 after lunch or Rest Break 2
 /// before lunch ends. Company HR/counsel should approve final production rules.
+// This type groups related state and behavior under a clear responsibility.
 enum CaliforniaRestBreakPolicy {
 
     static let minimumRestMinutes = 10
     static let minimumMealMinutes = 30
 
+    // This type groups related state and behavior under a clear responsibility.
     struct Recommendation: Equatable {
         let break1Start: Date
         let break2Start: Date
     }
 
+    // This type groups related state and behavior under a clear responsibility.
     enum ValidationError: LocalizedError, Equatable {
         case restBreakTooShort
         case mealTooShort
@@ -55,6 +59,7 @@ enum CaliforniaRestBreakPolicy {
     /// Recommended starts:
     /// Break 1 ≈ 9:15 AM
     /// Break 2 ≈ 1:45 PM
+    // Derive suggested rest break times for a shift.
     static func recommendedBreakStarts(
         shiftStart: Date,
         lunchStart: Date,
@@ -81,6 +86,7 @@ enum CaliforniaRestBreakPolicy {
     ///
     /// We deliberately do not invent a fixed legal "one-hour window" around
     /// the midpoint because California's rule is "insofar as practicable."
+    // Reject break windows that fall outside the configured shift/work periods.
     static func validate(
         shiftStart: Date,
         break1Start: Date,

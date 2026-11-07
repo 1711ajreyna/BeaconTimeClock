@@ -1,6 +1,8 @@
+// FILE PURPOSE: Adds or removes employees from a selected shift roster.
 import SwiftUI
 
 /// Shows the supervisor who works this shift, and lets them change the roster.
+// This type groups related state and behavior under a clear responsibility.
 struct EmployeeAssignmentView: View {
     @Environment(\.dismiss) private var dismiss
     let shift: WorkShift // Selected Morning/Evening/Night shift.
@@ -9,7 +11,9 @@ struct EmployeeAssignmentView: View {
     let onAssign: (UUID) -> Void // Delegate writes to the ViewModel/API.
     let onRemove: (UUID) -> Void
 
+    // The SwiftUI body describes the visible screen from the current state.
     var body: some View {
+        // Maintain a navigation path and allow drill-down screens.
         NavigationStack {
             List {
                 Section("\(shift.name) — \(shift.department.displayName)") {

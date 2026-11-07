@@ -1,8 +1,11 @@
+// FILE PURPOSE: Authenticated HTTP client calling Supabase Edge Functions in production mode.
 import Foundation
 
+// This type groups related state and behavior under a clear responsibility.
 enum ProductionAPIError: LocalizedError {
     case missingBaseURL
     case missingAuthentication
+    case demoOnlyOperation
     case invalidResponse
     case httpError(Int, String)
 
@@ -12,6 +15,8 @@ enum ProductionAPIError: LocalizedError {
             return "The Supabase Edge Function URL is not configured."
         case .missingAuthentication:
             return "A signed-in session is required."
+        case .demoOnlyOperation:
+            return "Demo data operations are disabled in production."
         case .invalidResponse:
             return "The server returned an invalid response."
         case .httpError(let status, let message):
@@ -20,7 +25,9 @@ enum ProductionAPIError: LocalizedError {
     }
 }
 
+// UI-observed state and these operations run on the main actor.
 @MainActor
+// This type groups related state and behavior under a clear responsibility.
 final class ProductionAPIClient: WorkflowAPI {
     typealias TokenProvider = () async -> String?
 
@@ -28,6 +35,7 @@ final class ProductionAPIClient: WorkflowAPI {
     private let tokenProvider: TokenProvider
     private let session: URLSession
 
+    // Create this object with the dependencies or state it needs; avoid hidden global services.
     init(
         baseURL: URL? = AppConfig.apiBaseURL,
         session: URLSession = .shared,
@@ -38,6 +46,7 @@ final class ProductionAPIClient: WorkflowAPI {
         self.tokenProvider = tokenProvider
     }
 
+    // Return the authenticated employee/role profile.
     func fetchMyProfile() async throws -> UserProfile {
         try await sendWithoutBody(
             path: "my-profile",
@@ -46,9 +55,11 @@ final class ProductionAPIClient: WorkflowAPI {
         )
     }
 
+    // Submit a clock action and save the authoritative server response.
     func submitPunch(
         _ request: SubmitPunchRequest
     ) async throws -> SubmitPunchResponse {
+        // Serialize the request, call the production endpoint and decode its result.
         try await send(
             path: "submit-punch",
             method: "POST",
@@ -57,6 +68,7 @@ final class ProductionAPIClient: WorkflowAPI {
         )
     }
 
+    // Retrieve the signed-in employee's current assigned shift.
     func fetchMyShift() async throws -> MyShiftResponse {
         try await sendWithoutBody(
             path: "my-shift",
@@ -65,9 +77,11 @@ final class ProductionAPIClient: WorkflowAPI {
         )
     }
 
+    // Record a paid rest-break event or exception.
     func recordShiftEvent(
         _ request: RecordShiftEventRequest
     ) async throws -> RecordShiftEventResponse {
+        // Serialize the request, call the production endpoint and decode its result.
         try await send(
             path: "record-shift-event",
             method: "POST",
@@ -78,6 +92,7 @@ final class ProductionAPIClient: WorkflowAPI {
 
     // MARK: - Named Shifts and Rosters
 
+    // Load named shifts, assigned staff and available employees with department scoping.
     func fetchShiftRoster() async throws -> ShiftRosterResponse {
         try await sendWithoutBody(
             path: "shift-roster", method: "GET",
@@ -85,20 +100,25 @@ final class ProductionAPIClient: WorkflowAPI {
         )
     }
 
+    // Create a new shift after validating its department and time window.
     func createWorkShift(_ request: CreateWorkShiftRequest) async throws -> WorkShift {
+        // Serialize the request, call the production endpoint and decode its result.
         try await send(
             path: "create-work-shift", method: "POST", body: request,
             responseType: WorkShift.self
         )
     }
 
+    // Attach an authorized employee to the selected shift.
     func assignWorkShift(_ request: AssignWorkShiftRequest) async throws -> WorkShiftAssignment {
+        // Serialize the request, call the production endpoint and decode its result.
         try await send(
             path: "assign-work-shift", method: "POST", body: request,
             responseType: WorkShiftAssignment.self
         )
     }
 
+    // Remove a roster link without erasing past punches.
     func removeWorkShiftAssignment(_ request: RemoveWorkShiftAssignmentRequest) async throws {
         let _: BasicAPIResponse = try await send(
             path: "remove-work-shift-assignment", method: "POST", body: request,
@@ -106,6 +126,7 @@ final class ProductionAPIClient: WorkflowAPI {
         )
     }
 
+    // Retrieve schedules that this supervisor is allowed to manage.
     func fetchSupervisorSchedule() async throws -> SupervisorScheduleResponse {
         try await sendWithoutBody(
             path: "supervisor-schedule",
@@ -114,9 +135,11 @@ final class ProductionAPIClient: WorkflowAPI {
         )
     }
 
+    // Submit changes to break times with adjustment reasons.
     func updateShiftSchedule(
         _ request: UpdateShiftScheduleRequest
     ) async throws -> UpdateShiftScheduleResponse {
+        // Serialize the request, call the production endpoint and decode its result.
         try await send(
             path: "update-shift-schedule",
             method: "POST",
@@ -125,6 +148,30 @@ final class ProductionAPIClient: WorkflowAPI {
         )
     }
 
+    // Production parity: both paths are explicit authenticated Edge Functions.
+    // Deploy these functions + secure RLS before switching demoMode off.
+    // Return non-sensitive completion states visible to signed-in staff.
+    func fetchCompanySubmissionStatus() async throws -> CompanySubmissionStatus {
+        try await sendWithoutBody(
+            path: "company-submission-status", method: "GET",
+            responseType: CompanySubmissionStatus.self
+        )
+    }
+
+    // Load sensitive payroll records for HR/admin use only.
+    func fetchHRPayrollPacket() async throws -> HRPayrollPacket {
+        try await sendWithoutBody(
+            path: "hr-payroll-packet", method: "GET",
+            responseType: HRPayrollPacket.self
+        )
+    }
+
+    // Seed an approved sample packet for a repeatable HR demonstration.
+    func prepareDemoHRPacket() async throws {
+        throw ProductionAPIError.demoOnlyOperation
+    }
+
+    // Load department approval progress and edit permissions.
     func fetchSupervisorDashboard()
     async throws -> SupervisorDashboard {
         try await sendWithoutBody(
@@ -134,6 +181,7 @@ final class ProductionAPIClient: WorkflowAPI {
         )
     }
 
+    // Retrieve a selected department's detailed weekly timesheet.
     func fetchDepartmentTimesheet(
         timesheetID: UUID
     ) async throws -> DepartmentTimesheet {
@@ -144,9 +192,11 @@ final class ProductionAPIClient: WorkflowAPI {
         )
     }
 
+    // Change an effective punch time without silently discarding the original.
     func adjustPunch(
         _ request: PunchAdjustmentRequest
     ) async throws -> PunchAdjustmentResponse {
+        // Serialize the request, call the production endpoint and decode its result.
         try await send(
             path: "adjust-punch",
             method: "POST",
@@ -155,9 +205,11 @@ final class ProductionAPIClient: WorkflowAPI {
         )
     }
 
+    // Approve a department sheet only after role, exception and signature checks.
     func approveDepartment(
         _ request: ApproveDepartmentRequest
     ) async throws -> ApproveDepartmentResponse {
+        // Serialize the request, call the production endpoint and decode its result.
         try await send(
             path: "approve-department",
             method: "POST",

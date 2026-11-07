@@ -1,3 +1,4 @@
+// FILE PURPOSE: SwiftData local cache for a single employee attendance punch and its sync state.
 import Foundation
 import SwiftData
 
@@ -5,7 +6,9 @@ import SwiftData
 ///
 /// The backend is the production source of truth,
 /// but keeping a local record will provide immediate UI feedback a
+// SwiftData persists this reference type in the device's local database.
 @Model
+// This type groups related state and behavior under a clear responsibility.
 final class TimeCard {
     
     @Attribute(.unique)
@@ -36,6 +39,7 @@ final class TimeCard {
         }
     }
     
+    // Create this object with the dependencies or state it needs; avoid hidden global services.
     init(
             id: UUID = UUID(),
             remoteID: UUID? = nil,

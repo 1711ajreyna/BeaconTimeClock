@@ -1,3 +1,4 @@
+// FILE PURPOSE: In-memory mock workflow for timecards, shift rosters, approvals and HR demo data.
 import Foundation
 
 /// In-memory backend for the class demonstration.
@@ -11,7 +12,9 @@ import Foundation
 /// - weekly department approval workflow,
 /// - manual punch correction,
 /// - digital approval and simulated HR merge.
+// UI-observed state and these operations run on the main actor.
 @MainActor
+// This type groups related state and behavior under a clear responsibility.
 final class DemoAPIClient: WorkflowAPI {
     private let profileProvider: () -> UserProfile?
 
@@ -25,6 +28,7 @@ final class DemoAPIClient: WorkflowAPI {
     private var workShifts: [UUID: WorkShift] = [:] // Named shift occurrences.
     private var rosterAssignments: [UUID: WorkShiftAssignment] = [:] // Employee rosters.
 
+    // Create this object with the dependencies or state it needs; avoid hidden global services.
     init(
         profileProvider: @escaping () -> UserProfile?
     ) {
@@ -32,7 +36,9 @@ final class DemoAPIClient: WorkflowAPI {
         seed()
     }
 
+    // Return the authenticated employee/role profile.
     func fetchMyProfile() async throws -> UserProfile {
+        // Obtain the signed-in user before exposing any private data.
         guard let profile = profileProvider() else {
             throw DemoError.notSignedIn
         }
@@ -40,6 +46,7 @@ final class DemoAPIClient: WorkflowAPI {
         return profile
     }
 
+    // Submit a clock action and save the authoritative server response.
     func submitPunch(
         _ request: SubmitPunchRequest
     ) async throws -> SubmitPunchResponse {
@@ -51,7 +58,9 @@ final class DemoAPIClient: WorkflowAPI {
         )
     }
 
+    // Retrieve the signed-in employee's current assigned shift.
     func fetchMyShift() async throws -> MyShiftResponse {
+        // Obtain the signed-in user before exposing any private data.
         guard let profile = profileProvider(),
               profile.role == .employee,
               let employeeID = profile.employeeID,
@@ -86,9 +95,11 @@ final class DemoAPIClient: WorkflowAPI {
         )
     }
 
+    // Record a paid rest-break event or exception.
     func recordShiftEvent(
         _ request: RecordShiftEventRequest
     ) async throws -> RecordShiftEventResponse {
+        // Obtain the signed-in user before exposing any private data.
         guard let profile = profileProvider(),
               profile.role == .employee,
               let employeeID = profile.employeeID,
@@ -136,6 +147,7 @@ final class DemoAPIClient: WorkflowAPI {
 
     // MARK: - Supervisor Shift Management (Demo Mode)
 
+    // Load named shifts, assigned staff and available employees with department scoping.
     func fetchShiftRoster() async throws -> ShiftRosterResponse {
         try requireSupervisor()
         let employees = shiftRows.values.map { row in
@@ -144,16 +156,28 @@ final class DemoAPIClient: WorkflowAPI {
                 employeeName: row.employeeName, department: row.department
             )
         }
+        // One supervisor sees only their department; HR/admin see all five.
+        let profile = profileProvider()!
+        let allowedShifts = workShifts.values.filter {
+            profile.canManageDepartment($0.department)
+        }
+        let allowedIDs = Set(allowedShifts.map(\.id))
         return ShiftRosterResponse(
-            shifts: workShifts.values.sorted { $0.startTime < $1.startTime },
-            assignments: Array(rosterAssignments.values),
-            employees: employees.sorted { $0.employeeName < $1.employeeName }
+            shifts: allowedShifts.sorted { $0.startTime < $1.startTime },
+            assignments: rosterAssignments.values.filter {
+                allowedIDs.contains($0.shiftID)
+            },
+            employees: employees.filter {
+                profile.canManageDepartment($0.department)
+            }.sorted { $0.employeeName < $1.employeeName }
         )
     }
 
+    // Create a new shift after validating its department and time window.
     func createWorkShift(_ request: CreateWorkShiftRequest) async throws -> WorkShift {
         try requireSupervisor()
         let shift = request.shift
+        try requireDepartment(shift.department)
         guard !shift.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
               shift.endTime > shift.startTime else {
             throw DemoError.invalidSchedule
@@ -169,6 +193,7 @@ final class DemoAPIClient: WorkflowAPI {
         return shift
     }
 
+    // Attach an authorized employee to the selected shift.
     func assignWorkShift(_ request: AssignWorkShiftRequest) async throws -> WorkShiftAssignment {
         try requireSupervisor()
         guard let shift = workShifts[request.shiftID],
@@ -176,6 +201,7 @@ final class DemoAPIClient: WorkflowAPI {
               employee.department == shift.department else {
             throw DemoError.unauthorized
         }
+        try requireDepartment(shift.department)
         // One active daily schedule per employee. Reject duplicate assignments.
         let existing = rosterAssignments.values.first { assignment in
             assignment.employeeID == request.employeeID &&
@@ -205,22 +231,48 @@ final class DemoAPIClient: WorkflowAPI {
         return assignment
     }
 
+    // Remove a roster link without erasing past punches.
     func removeWorkShiftAssignment(_ request: RemoveWorkShiftAssignmentRequest) async throws {
         try requireSupervisor()
-        guard rosterAssignments.removeValue(forKey: request.assignmentID) != nil else {
+        guard let assignment = rosterAssignments[request.assignmentID],
+              let shift = workShifts[assignment.shiftID] else {
             throw DemoError.notFound
         }
+        try requireDepartment(shift.department) // Authorize BEFORE mutation.
+        rosterAssignments.removeValue(forKey: request.assignmentID)
         // A production system also checks whether payroll events already exist.
     }
 
+    // Reused by ALL demo reads and writes. Not a production security boundary.
+    // Reject attempts to read or edit departments outside the signed-in user's scope.
+    private func requireDepartment(_ department: Department) throws {
+        // Obtain the signed-in user before exposing any private data.
+        guard let profile = profileProvider(),
+              profile.canManageDepartment(department) else {
+            throw DemoError.unauthorized
+        }
+    }
+
+    // Reject detailed payroll access from non-HR accounts.
+    private func requireHR() throws {
+        // Obtain the signed-in user before exposing any private data.
+        guard let profile = profileProvider(), profile.canAccessPayroll else {
+            throw DemoError.unauthorized
+        }
+    }
+
+    // Check the caller has management privileges before continuing.
     private func requireSupervisor() throws {
+        // Obtain the signed-in user before exposing any private data.
         guard let profile = profileProvider(), profile.role.canUseSupervisorTools else {
             throw DemoError.unauthorized
         }
     }
 
+    // Retrieve schedules that this supervisor is allowed to manage.
     func fetchSupervisorSchedule()
     async throws -> SupervisorScheduleResponse {
+        // Obtain the signed-in user before exposing any private data.
         guard let profile = profileProvider(),
               profile.role.canUseSupervisorTools else {
             throw DemoError.unauthorized
@@ -228,15 +280,17 @@ final class DemoAPIClient: WorkflowAPI {
 
         return SupervisorScheduleResponse(
             workDate: Self.todayString(),
-            rows: shiftRows.values.sorted {
-                $0.employeeName < $1.employeeName
-            }
+            rows: shiftRows.values.filter {
+                profile.canManageDepartment($0.department)
+            }.sorted { $0.employeeName < $1.employeeName }
         )
     }
 
+    // Submit changes to break times with adjustment reasons.
     func updateShiftSchedule(
         _ request: UpdateShiftScheduleRequest
     ) async throws -> UpdateShiftScheduleResponse {
+        // Obtain the signed-in user before exposing any private data.
         guard let profile = profileProvider(),
               profile.role.canUseSupervisorTools else {
             throw DemoError.unauthorized
@@ -245,6 +299,8 @@ final class DemoAPIClient: WorkflowAPI {
         guard var row = shiftRows[request.shiftAssignmentID] else {
             throw DemoError.employeeShiftNotFound
         }
+
+        try requireDepartment(row.department)
 
         do {
             try CaliforniaRestBreakPolicy.validate(
@@ -317,54 +373,97 @@ final class DemoAPIClient: WorkflowAPI {
         )
     }
 
-    func fetchSupervisorDashboard()
-    async throws -> SupervisorDashboard {
-        guard let profile = profileProvider(),
-              profile.role.canUseSupervisorTools else {
-            throw DemoError.unauthorized
-        }
-
-        let sheets = timesheets.values.sorted {
-            $0.department.sortOrder < $1.department.sortOrder
-        }
-
-        let summaries = sheets.map { sheet in
-            DepartmentApprovalSummary(
-                id: sheet.id,
-                department: sheet.department,
-                status: sheet.status,
-                employeeCount: sheet.employees.count,
-                regularHours: sheet.regularHours,
-                overtimeHours: sheet.overtimeHours,
-                totalHours: sheet.totalHours,
-                supervisorName: sheet.supervisorName,
-                signedAt: sheet.signedAt,
-                canEdit: sheet.status == .pending
-            )
-        }
-
-        let allApproved = !summaries.isEmpty &&
-            summaries.allSatisfy { $0.status != .pending }
-        let anySent = summaries.contains { $0.status == .sentToHR }
-
-        let hrStatus: HRPacketStatus = anySent
-            ? .emailed
-            : (allApproved ? .ready : .waitingForDepartments)
-
+    // MARK: - HR Submission Status (safe for ALL signed-in roles)
+    // Return non-sensitive completion states visible to signed-in staff.
+    func fetchCompanySubmissionStatus() async throws -> CompanySubmissionStatus {
+        guard profileProvider() != nil else { throw DemoError.notSignedIn }
         let range = Self.previousWeekStrings()
-
-        return SupervisorDashboard(
-            weekStart: range.start,
-            weekEnd: range.end,
-            generatedAt: dashboardGeneratedAt,
-            departments: summaries,
-            hrPacketStatus: hrStatus
+        let departments = Department.allCases.sorted { $0.sortOrder < $1.sortOrder }
+        let rows = departments.map { department -> CompanyDepartmentStatus in
+            guard let sheet = timesheets.values.first(where: { $0.department == department }) else {
+                return CompanyDepartmentStatus(department: department, stage: .notGenerated)
+            }
+            let stage: CompanyDepartmentStage
+            switch sheet.status {
+            case .pending: stage = .pending
+            case .approved: stage = .approved
+            case .sentToHR: stage = .sentToHR
+            }
+            return CompanyDepartmentStatus(department: department, stage: stage)
+        }
+        return CompanySubmissionStatus(
+            weekStart: range.start, weekEnd: range.end,
+            departments: rows,
+            hrDeliveryConfirmed: rows.allSatisfy { $0.stage == .sentToHR }
         )
     }
 
+    // MARK: - HR-only weekly packet (one complete timesheet per department)
+    // Load sensitive payroll records for HR/admin use only.
+    func fetchHRPayrollPacket() async throws -> HRPayrollPacket {
+        try requireHR()
+        let range = Self.previousWeekStrings()
+        return HRPayrollPacket(
+            weekStart: range.start,
+            weekEnd: range.end,
+            departments: timesheets.values.sorted {
+                $0.department.sortOrder < $1.department.sortOrder
+            }
+        )
+    }
+
+    /// Makes a complete *simulated* signed packet, for capstone HR PDF demos.
+    /// Does NOT send email, certify actual hours or submit real payroll.
+    // Seed an approved sample packet for a repeatable HR demonstration.
+    func prepareDemoHRPacket() async throws {
+        try requireHR()
+        for id in Array(timesheets.keys) {
+            timesheets[id]?.status = .approved
+            timesheets[id]?.signedAt = Date()
+            timesheets[id]?.supervisorName = "DEMO SIGNOFF - NOT REAL"
+            timesheets[id]?.signaturePresent = true
+        }
+    }
+
+    // Load department approval progress and edit permissions.
+    func fetchSupervisorDashboard()
+    async throws -> SupervisorDashboard {
+        try requireSupervisor()
+        let profile = profileProvider()!
+        let sheets = timesheets.values.filter {
+            profile.canManageDepartment($0.department)
+        }.sorted { $0.department.sortOrder < $1.department.sortOrder }
+
+        let summaries = sheets.map { sheet in
+            DepartmentApprovalSummary(
+                id: sheet.id, department: sheet.department,
+                status: sheet.status, employeeCount: sheet.employees.count,
+                regularHours: sheet.regularHours,
+                overtimeHours: sheet.overtimeHours,
+                totalHours: sheet.totalHours, supervisorName: sheet.supervisorName,
+                signedAt: sheet.signedAt,
+                canEdit: sheet.status == .pending && profile.canManageDepartment(sheet.department)
+            )
+        }
+        let allApproved = !timesheets.isEmpty && timesheets.values.allSatisfy {
+            $0.status != .pending
+        }
+        let anySent = timesheets.values.contains { $0.status == .sentToHR }
+        let hrStatus: HRPacketStatus = anySent ? .emailed :
+            (allApproved ? .ready : .waitingForDepartments)
+        let range = Self.previousWeekStrings()
+        return SupervisorDashboard(
+            weekStart: range.start, weekEnd: range.end,
+            generatedAt: dashboardGeneratedAt,
+            departments: summaries, hrPacketStatus: hrStatus
+        )
+    }
+
+    // Retrieve a selected department's detailed weekly timesheet.
     func fetchDepartmentTimesheet(
         timesheetID: UUID
     ) async throws -> DepartmentTimesheet {
+        // Obtain the signed-in user before exposing any private data.
         guard let profile = profileProvider(),
               profile.role.canUseSupervisorTools else {
             throw DemoError.unauthorized
@@ -374,12 +473,15 @@ final class DemoAPIClient: WorkflowAPI {
             throw DemoError.notFound
         }
 
+        try requireDepartment(sheet.department)
         return sheet
     }
 
+    // Change an effective punch time without silently discarding the original.
     func adjustPunch(
         _ request: PunchAdjustmentRequest
     ) async throws -> PunchAdjustmentResponse {
+        // Obtain the signed-in user before exposing any private data.
         guard let profile = profileProvider(),
               profile.role.canUseSupervisorTools else {
             throw DemoError.unauthorized
@@ -389,6 +491,7 @@ final class DemoAPIClient: WorkflowAPI {
             throw DemoError.notFound
         }
 
+        try requireDepartment(sheet.department)
         guard sheet.status == .pending else {
             throw DemoError.alreadyApproved
         }
@@ -436,9 +539,11 @@ final class DemoAPIClient: WorkflowAPI {
         )
     }
 
+    // Approve a department sheet only after role, exception and signature checks.
     func approveDepartment(
         _ request: ApproveDepartmentRequest
     ) async throws -> ApproveDepartmentResponse {
+        // Obtain the signed-in user before exposing any private data.
         guard let profile = profileProvider(),
               profile.role.canUseSupervisorTools else {
             throw DemoError.unauthorized
@@ -448,6 +553,7 @@ final class DemoAPIClient: WorkflowAPI {
             throw DemoError.notFound
         }
 
+        try requireDepartment(sheet.department)
         guard sheet.status == .pending else {
             throw DemoError.alreadyApproved
         }
@@ -473,6 +579,7 @@ final class DemoAPIClient: WorkflowAPI {
             throw DemoError.signatureRequired
         }
 
+        // Demo timestamp only; a production approval must use the server clock.
         let signedAt = Date()
         sheet.status = .approved
         sheet.supervisorName = printedName
@@ -484,24 +591,23 @@ final class DemoAPIClient: WorkflowAPI {
             $0.status == .approved || $0.status == .sentToHR
         }
 
-        if allApproved {
-            for id in Array(timesheets.keys) {
-                timesheets[id]?.status = .sentToHR
-            }
-        }
+        // Approval != delivery: leave sheets approved until a real delivery receipt.
+        // Demo status stays 'ready', never falsely claims an email was sent.
 
         return ApproveDepartmentResponse(
             success: true,
             signedAt: signedAt,
             allDepartmentsApproved: allApproved,
-            hrMergeTriggered: allApproved,
+            hrMergeTriggered: false, // No real delivery job runs in demo mode.
             message: allApproved
-                ? "All departments approved. Demo HR workbook was merged and emailed."
+                ? "All departments approved. HR packet ready for review (demo; not emailed)."
                 : "Department approved. HR is waiting for the remaining departments."
         )
     }
 
     func resetDemoData() async {
+        // The reset impacts ALL departments, so ordinary supervisors cannot run it.
+        guard (try? requireHR()) != nil else { return }
         seed()
     }
 
@@ -517,66 +623,44 @@ final class DemoAPIClient: WorkflowAPI {
     private func seedDailySchedules() {
         shiftRows.removeAll()
         shiftEvents.removeAll()
-
         let calendar = Self.companyCalendar()
         let today = Date()
 
-        func time(_ hour: Int, _ minute: Int) -> Date {
-            calendar.date(
-                bySettingHour: hour,
-                minute: minute,
-                second: 0,
-                of: today
-            )!
-        }
-
-        let employee = SupervisorScheduleRow(
-            id: UUID(),
-            employeeID: UUID(
-                uuidString: "11111111-1111-1111-1111-111111111111"
-            )!,
-            employeeNumber: "EMP-001",
-            employeeName: "Demo Employee",
-            department: .electrical,
-            shiftStart: time(7, 0),
-            break1Start: time(9, 15),
-            lunchStart: time(11, 30),
-            break2Start: time(13, 45),
-            shiftEnd: time(15, 30),
-            restBreakDurationMinutes:
-                AppConfig.restBreakDurationMinutes,
-            lunchDurationMinutes:
-                AppConfig.lunchDurationMinutes,
-            break1AdjustmentReason: nil,
-            break2AdjustmentReason: nil
-        )
-
-        shiftRows[employee.id] = employee
-
-        let otherDepartments: [Department] = [
-            .machineShop, .metals, .plastics, .litho
+        // Six distinct fictional employees in EACH of the five departments.
+        // EMP-001 is the existing demo login, preserving My Shift compatibility.
+        let names: [[String]] = [
+            ["Demo Employee", "Avery Brooks", "Jordan Hale", "Casey Rivera", "Morgan Quinn", "Cameron Ellis"],
+            ["Taylor Stone", "Robin Diaz", "Parker Lin", "Finley Ross", "Quinn Avery", "Jamie Wells"],
+            ["Skyler Young", "Dakota Reed", "Harper Grant", "Sage Bennett", "Jules Morgan", "Drew Parker"],
+            ["Reese Cooper", "Alex Kendall", "Sam Carter", "Blake Turner", "Remy Jordan", "Charlie Ellis"],
+            ["Emerson Lane", "Riley Cole", "Ellis Morgan", "Lee Harper", "Mika Reed", "Rowan Brooks"]
         ]
 
-        for department in otherDepartments {
-            let row = SupervisorScheduleRow(
-                id: UUID(),
-                employeeID: UUID(),
-                employeeNumber: "DEMO-\(department.sortOrder + 10)",
-                employeeName: "\(department.displayName) Demo Employee",
-                department: department,
-                shiftStart: time(7, 0),
-                break1Start: time(9, 30),
-                lunchStart: time(12, 0),
-                break2Start: time(14, 0),
-                shiftEnd: time(15, 30),
-                restBreakDurationMinutes:
-                    AppConfig.restBreakDurationMinutes,
-                lunchDurationMinutes:
-                    AppConfig.lunchDurationMinutes,
-                break1AdjustmentReason: nil,
-                break2AdjustmentReason: nil
-            )
-            shiftRows[row.id] = row
+        for department in Department.allCases {
+            for index in 0..<6 {
+                let serial = department.sortOrder * 6 + index + 1
+                let employeeID = serial == 1
+                    ? UUID(uuidString: "11111111-1111-1111-1111-111111111111")!
+                    : UUID()
+                let dayStart = calendar.date(
+                    bySettingHour: 7, minute: 0, second: 0, of: today
+                )!
+                let row = SupervisorScheduleRow(
+                    id: UUID(), employeeID: employeeID,
+                    employeeNumber: String(format: "EMP-%03d", serial),
+                    employeeName: names[department.sortOrder][index],
+                    department: department,
+                    shiftStart: dayStart,
+                    break1Start: dayStart.addingTimeInterval(2.25 * 3600),
+                    lunchStart: dayStart.addingTimeInterval(4.5 * 3600),
+                    break2Start: dayStart.addingTimeInterval(6.75 * 3600),
+                    shiftEnd: dayStart.addingTimeInterval(8.5 * 3600),
+                    restBreakDurationMinutes: AppConfig.restBreakDurationMinutes,
+                    lunchDurationMinutes: AppConfig.lunchDurationMinutes,
+                    break1AdjustmentReason: nil, break2AdjustmentReason: nil
+                )
+                shiftRows[row.id] = row
+            }
         }
     }
 
@@ -585,65 +669,74 @@ final class DemoAPIClient: WorkflowAPI {
     private func seedNamedShifts() {
         workShifts.removeAll()
         rosterAssignments.removeAll()
-        // All three examples are standard eight-paid-hour shifts.
-        let samples: [(String, Department, Int, Int, Int, Int)] = [
-            ("Morning", .electrical, 6, 0, 14, 30),
-            ("Evening", .machineShop, 14, 0, 22, 30),
-            ("Night", .metals, 22, 0, 6, 30)
+        // Every department has three shift examples with two employees each.
+        let sampleTimes: [(String, Int, Int, Int, Int)] = [
+            ("Morning", 6, 0, 14, 30),
+            ("Evening", 14, 0, 22, 30),
+            ("Night", 22, 0, 6, 30)
         ]
-        for (name, department, startHour, startMinute, endHour, endMinute) in samples {
-            do {
-                let shift = try WorkShift.makeEightHourShift(
-                    name: name, department: department, workDate: Date(),
-                    startHour: startHour, startMinute: startMinute,
-                    endHour: endHour, endMinute: endMinute
-                )
-                workShifts[shift.id] = shift
-            } catch {
-                print("Could not seed demo shift: \(error)")
+        for department in Department.allCases {
+            let employees = shiftRows.values.filter {
+                $0.department == department
+            }.sorted { $0.employeeNumber < $1.employeeNumber }
+
+            for (index, sample) in sampleTimes.enumerated() {
+                let (name, sh, sm, eh, em) = sample
+                do {
+                    let shift = try WorkShift.makeEightHourShift(
+                        name: name, department: department, workDate: Date(),
+                        startHour: sh, startMinute: sm,
+                        endHour: eh, endMinute: em
+                    )
+                    workShifts[shift.id] = shift
+                    // Only one roster assignment per employee on this date.
+                    for row in employees.dropFirst(index * 2).prefix(2) {
+                        let assignment = WorkShiftAssignment(
+                            id: UUID(), employeeID: row.employeeID,
+                            employeeNumber: row.employeeNumber,
+                            employeeName: row.employeeName, shiftID: shift.id
+                        )
+                        rosterAssignments[assignment.id] = assignment
+                    }
+                } catch {
+                    print("Could not seed demo shift: \(error)")
+                }
             }
         }
     }
 
     private func seedWeeklyTimesheets() {
         let range = Self.previousWeekStrings()
-        let seeds: [(Department, Double, Bool)] = [
-            (.electrical, 43.5, false),
-            (.machineShop, 38.0, false),
-            (.metals, 40.0, false),
-            (.plastics, 46.25, true),
-            (.litho, 39.5, false)
-        ]
+        // Generate one department packet containing ALL six people, not one
+        // fake employee per department. Each packet maps to exactly one HR form.
+        timesheets = [:]
+        for department in Department.allCases {
+            let employees = shiftRows.values.filter {
+                $0.department == department
+            }.sorted { $0.employeeNumber < $1.employeeNumber }
 
-        timesheets = Dictionary(
-            uniqueKeysWithValues: seeds.map { department, hours, skippedBreak in
-                let employee = Self.makeWeeklyEmployee(
-                    department: department,
-                    totalHours: hours,
-                    skippedBreak: skippedBreak
+            let weekly = employees.enumerated().map { index, row in
+                Self.makeWeeklyEmployee(
+                    employeeNumber: row.employeeNumber,
+                    employeeName: row.employeeName,
+                    totalHours: [38.0, 40.0, 43.5, 37.5, 45.0, 39.25][index],
+                    skippedBreak: department == .plastics && index == 2
                 )
-
-                let sheet = DepartmentTimesheet(
-                    id: UUID(),
-                    department: department,
-                    weekStart: range.start,
-                    weekEnd: range.end,
-                    status: .pending,
-                    employees: [employee],
-                    generatedAt: Date(),
-                    sentToSupervisorAt: Date(),
-                    supervisorName: nil,
-                    signedAt: nil,
-                    signaturePresent: false
-                )
-
-                return (sheet.id, sheet)
             }
-        )
+            let sheet = DepartmentTimesheet(
+                id: UUID(), department: department,
+                weekStart: range.start, weekEnd: range.end,
+                status: .pending, employees: weekly,
+                generatedAt: Date(), sentToSupervisorAt: Date(),
+                supervisorName: nil, signedAt: nil, signaturePresent: false
+            )
+            timesheets[sheet.id] = sheet
+        }
     }
 
     private static func makeWeeklyEmployee(
-        department: Department,
+        employeeNumber: String,
+        employeeName: String,
         totalHours: Double,
         skippedBreak: Bool
     ) -> EmployeeWeeklySummary {
@@ -771,8 +864,8 @@ final class DemoAPIClient: WorkflowAPI {
 
         return EmployeeWeeklySummary(
             id: UUID(),
-            employeeID: "DEMO-\(department.sortOrder + 1)",
-            employeeName: "\(department.displayName) Demo Employee",
+            employeeID: employeeNumber,
+            employeeName: employeeName,
             regularHours: split.regular,
             overtimeHours: split.overtime,
             totalHours: split.total,

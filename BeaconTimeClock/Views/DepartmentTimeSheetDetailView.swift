@@ -1,10 +1,13 @@
+// FILE PURPOSE: Detailed supervisor timesheet review and signature screen.
 import SwiftUI
 import PencilKit
 
 /// Supervisor review screen for one department's previous-week packet.
+// This type groups related state and behavior under a clear responsibility.
 struct DepartmentTimesheetDetailView:
     View
 {
+    // SwiftUI owns and preserves this observable object across view redraws.
     @StateObject
     private var viewModel:
         DepartmentTimesheetViewModel
@@ -27,6 +30,7 @@ struct DepartmentTimesheetDetailView:
     private var showApprovalAlert =
         false
 
+    // Create this object with the dependencies or state it needs; avoid hidden global services.
     init(
         viewModel:
             DepartmentTimesheetViewModel,
@@ -41,6 +45,7 @@ struct DepartmentTimesheetDetailView:
         self.canEdit = canEdit
     }
 
+    // The SwiftUI body describes the visible screen from the current state.
     var body: some View {
         List {
             if let sheet =
@@ -147,6 +152,7 @@ struct DepartmentTimesheetDetailView:
                 )
             }
         }
+        .cscListStyle()
         .navigationTitle(
             viewModel
                 .timesheet?
@@ -154,9 +160,11 @@ struct DepartmentTimesheetDetailView:
                 .displayName
             ?? "Timesheet"
         )
+        // Start asynchronous work when SwiftUI presents this view; handle loading and errors.
         .task {
             await viewModel.load()
         }
+        // Open a modal editor while keeping its state owned by the parent view.
         .sheet(
             item:
                 $selectedPunch

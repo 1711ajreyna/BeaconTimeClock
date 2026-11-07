@@ -1,20 +1,29 @@
+// FILE PURPOSE: Supervisor shift roster, creation and employee assignment navigation.
 import SwiftUI
 
 /// New supervisor-facing screen. Other supervisor features remain in Approvals
 /// and Schedules (individual break-time adjustment).
+// This type groups related state and behavior under a clear responsibility.
 struct ShiftRosterView: View {
     // MARK: - State
+    // SwiftUI owns and preserves this observable object across view redraws.
     @StateObject private var viewModel: ShiftRosterViewModel
     @State private var showingCreate = false // Sheet for new shifts.
     @State private var selectedShift: WorkShift? // Which roster to edit.
 
+    // Create this object with the dependencies or state it needs; avoid hidden global services.
     init(viewModel: ShiftRosterViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
     }
 
+    // The SwiftUI body describes the visible screen from the current state.
     var body: some View {
+        // Maintain a navigation path and allow drill-down screens.
         NavigationStack {
             List {
+                Section {
+                    BrandHeaderView(subtitle: "Department Rosters")
+                }
                 if let roster = viewModel.roster {
                     Section("Company Shifts") {
                         ForEach(roster.shifts) { shift in
@@ -29,6 +38,7 @@ struct ShiftRosterView: View {
                                 }
                                 .font(.subheadline)
                             }
+                            // Stable accessibility ID allows repeatable XCUITest element lookup.
                             .accessibilityIdentifier("roster_\(shift.name.lowercased())")
                         }
                     }
@@ -43,15 +53,20 @@ struct ShiftRosterView: View {
                     Text(viewModel.successMessage).foregroundStyle(.green)
                 }
             }
+            .cscListStyle()
             .navigationTitle("Shift Rosters")
             .toolbar {
                 Button("New Shift", systemImage: "plus") {
                     showingCreate = true
                 }
+                // Stable accessibility ID allows repeatable XCUITest element lookup.
                 .accessibilityIdentifier("new_shift_button")
             }
+            // Start asynchronous work when SwiftUI presents this view; handle loading and errors.
             .task { await viewModel.load() }
+            // Enable pull-to-refresh without duplicating API logic.
             .refreshable { await viewModel.load() }
+            // Open a modal editor while keeping its state owned by the parent view.
             .sheet(isPresented: $showingCreate) {
                 ShiftEditorView { name, department, day, sh, sm, eh, em in
                     Task {
@@ -63,6 +78,7 @@ struct ShiftRosterView: View {
                     }
                 }
             }
+            // Open a modal editor while keeping its state owned by the parent view.
             .sheet(item: $selectedShift) { shift in
                 EmployeeAssignmentView(
                     shift: shift,

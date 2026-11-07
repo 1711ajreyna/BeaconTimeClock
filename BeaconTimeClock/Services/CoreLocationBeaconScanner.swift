@@ -1,3 +1,4 @@
+// FILE PURPOSE: Core Location implementation that ranges workplace iBeacons.
 import Foundation
 import CoreLocation
 
@@ -7,7 +8,9 @@ import CoreLocation
 /// A multi-protocol beacon can broadcast iBeacon for iOS
 /// and another BLE format for a future Android app.
 
+// UI-observed state and these operations run on the main actor.
 @MainActor
+// This type groups related state and behavior under a clear responsibility.
 final class CoreLocationBeaconScanner: NSObject, BeaconScanning {
 
     // MARK: - Properties
@@ -181,4 +184,3 @@ extension CoreLocationBeaconScanner: CLLocationManagerDelegate {
         }
     }
 }
-

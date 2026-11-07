@@ -1,6 +1,9 @@
+// FILE PURPOSE: Employee shift, scheduled breaks, overtime projection and notifications.
 import SwiftUI
 
+// This type groups related state and behavior under a clear responsibility.
 struct MyShiftView: View {
+    // SwiftUI owns and preserves this observable object across view redraws.
     @StateObject
     private var viewModel:
         MyShiftViewModel
@@ -9,6 +12,7 @@ struct MyShiftView: View {
     private var breakPendingDenial:
         RestBreakSlot?
 
+    // Create this object with the dependencies or state it needs; avoid hidden global services.
     init(
         viewModel:
             MyShiftViewModel
@@ -20,9 +24,14 @@ struct MyShiftView: View {
             )
     }
 
+    // The SwiftUI body describes the visible screen from the current state.
     var body: some View {
+        // Maintain a navigation path and allow drill-down screens.
         NavigationStack {
             List {
+                Section {
+                    BrandHeaderView(subtitle: "My Shift")
+                }
                 if let response =
                     viewModel.response
                 {
@@ -85,12 +94,15 @@ struct MyShiftView: View {
                     )
                 }
             }
+            .cscListStyle()
             .navigationTitle(
                 "My Shift"
             )
+            // Enable pull-to-refresh without duplicating API logic.
             .refreshable {
                 await viewModel.load()
             }
+            // Start asynchronous work when SwiftUI presents this view; handle loading and errors.
             .task {
                 await viewModel.load()
             }
@@ -395,6 +407,7 @@ struct MyShiftView: View {
                 .buttonStyle(
                     .borderedProminent
                 )
+                // Stable accessibility ID allows repeatable XCUITest element lookup.
                 .accessibilityIdentifier(
                     "accept_break_\(slot.rawValue)_button"
                 )
@@ -413,6 +426,7 @@ struct MyShiftView: View {
                     breakPendingDenial =
                         slot
                 }
+                // Stable accessibility ID allows repeatable XCUITest element lookup.
                 .accessibilityIdentifier(
                     "deny_break_\(slot.rawValue)_button"
                 )

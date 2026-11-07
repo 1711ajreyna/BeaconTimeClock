@@ -1,15 +1,21 @@
+// FILE PURPOSE: Displays the signed-in user and account actions.
 import SwiftUI
 
+// This type groups related state and behavior under a clear responsibility.
 struct AccountView: View {
     let profile: UserProfile
 
+    // Read a shared dependency injected by BeaconTimeClockApp; do not create it here.
     @EnvironmentObject private var auth: AuthManager
 
+    // The SwiftUI body describes the visible screen from the current state.
     var body: some View {
+        // Maintain a navigation path and allow drill-down screens.
         NavigationStack {
             Form {
                 Section {
                     HStack(spacing: 14) {
+                        // This asset must exist in Assets.xcassets; image names are case-sensitive.
                         Image("BrandLogo")
                             .resizable()
                             .scaledToFit()
@@ -19,6 +25,10 @@ struct AccountView: View {
                             )
 
                         VStack(alignment: .leading) {
+                            Text("CONTAINER SUPPLY")
+                                .font(.caption.weight(.bold))
+                                .tracking(1.0)
+                                .foregroundStyle(CSCTheme.steel)
                             Text(profile.displayName)
                                 .font(.headline)
                             Text(profile.email)
@@ -68,6 +78,7 @@ struct AccountView: View {
                     .foregroundStyle(.secondary)
                 }
             }
+            .cscListStyle()
             .navigationTitle("Account")
         }
     }
