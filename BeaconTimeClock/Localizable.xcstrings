@@ -21,6 +21,16 @@
         }
       }
     },
+    "%@ · %@ · %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ · %2$@ · %3$@"
+          }
+        }
+      }
+    },
     "%@ %@" : {
       "localizations" : {
         "en" : {
@@ -130,6 +140,16 @@
         }
       }
     },
+    "Active" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activo"
+          }
+        }
+      }
+    },
     "Add %@" : {
       "localizations" : {
         "es" : {
@@ -146,6 +166,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Agregar empleado"
+          }
+        }
+      }
+    },
+    "Add Staff" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agregar personal"
           }
         }
       }
@@ -475,6 +505,16 @@
         }
       }
     },
+    "Changing departments or deactivating staff removes their current demo shift assignment. Historical payroll records are preserved. Assign a new shift from Shift Rosters." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambiar de departamento o desactivar personal elimina su asignación de turno de demostración actual. Se conserva el historial de nómina. Asigne un turno nuevo desde las listas de turnos."
+          }
+        }
+      }
+    },
     "Choose one employee below to stagger only that employee's two paid rest breaks." : {
       "localizations" : {
         "es" : {
@@ -670,6 +710,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vista previa de PDF de demostración"
+          }
+        }
+      }
+    },
+    "Demo staff are saved on this device. Use their email and Demo123! to sign in. No invitations are sent." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El personal de demostración se guarda en este dispositivo. Use su correo y Demo123! para iniciar sesión. No se envían invitaciones."
           }
         }
       }
@@ -887,6 +937,16 @@
         }
       }
     },
+    "Edit Staff" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Editar personal"
+          }
+        }
+      }
+    },
     "Edit This Employee's Rest Breaks" : {
       "localizations" : {
         "es" : {
@@ -909,7 +969,6 @@
       }
     },
     "Email" : {
-      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -977,6 +1036,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Horario de descanso del empleado"
+          }
+        }
+      }
+    },
+    "Employee Number" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Número de empleado"
+          }
+        }
+      }
+    },
+    "Employee numbers stay fixed to preserve timecard history." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los números de empleado se mantienen para conservar el historial de asistencia."
           }
         }
       }
@@ -1195,9 +1274,6 @@
         }
       }
     },
-    "Hello, world!" : {
-
-    },
     "Hour" : {
       "localizations" : {
         "es" : {
@@ -1226,6 +1302,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Entrega a RR. HH. confirmada"
+          }
+        }
+      }
+    },
+    "HR Management" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Administración de RR. HH."
           }
         }
       }
@@ -1268,6 +1354,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "En curso"
+          }
+        }
+      }
+    },
+    "Inactive" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inactivo"
           }
         }
       }
@@ -1364,6 +1460,16 @@
         }
       }
     },
+    "Loading staff…" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cargando personal…"
+          }
+        }
+      }
+    },
     "Loading status…" : {
       "localizations" : {
         "es" : {
@@ -1456,6 +1562,16 @@
         }
       }
     },
+    "Manage Staff" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Administrar personal"
+          }
+        }
+      }
+    },
     "MANUFACTURING · SINCE 1947" : {
       "localizations" : {
         "es" : {
@@ -1542,6 +1658,26 @@
         }
       }
     },
+    "Name" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nombre"
+          }
+        }
+      }
+    },
+    "Name, email, or employee number" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nombre, correo o número de empleado"
+          }
+        }
+      }
+    },
     "name@company.com" : {
 
     },
@@ -1615,6 +1751,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sin datos"
+          }
+        }
+      }
+    },
+    "No matching staff" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se encontró personal"
           }
         }
       }
@@ -2260,12 +2406,25 @@
         }
       }
     },
+    "Retry" : {
+
+    },
     "Role" : {
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Función"
+          }
+        }
+      }
+    },
+    "Role and department changes affect access the next time this person signs in or refreshes their profile." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los cambios de rol y departamento se aplican la próxima vez que la persona inicie sesión o actualice su perfil."
           }
         }
       }
@@ -2284,12 +2443,31 @@
       }
     },
     "Save Changes" : {
-      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Guardar cambios"
+          }
+        }
+      }
+    },
+    "Save staff access changes?" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Guardar los cambios de acceso del personal?"
+          }
+        }
+      }
+    },
+    "Saving…" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guardando…"
           }
         }
       }
@@ -2495,6 +2673,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Origen: registros semanales del servidor. Las horas aprobadas no se recalculan en el teléfono."
+          }
+        }
+      }
+    },
+    "Staff Details" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Datos del personal"
           }
         }
       }

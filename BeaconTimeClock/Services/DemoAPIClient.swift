@@ -17,6 +17,7 @@ import Foundation
 // This type groups related state and behavior under a clear responsibility.
 final class DemoAPIClient: WorkflowAPI {
     private let profileProvider: () -> UserProfile?
+    private let staffDirectory: DemoStaffDirectory
 
     private var timesheets: [UUID: DepartmentTimesheet] = [:]
     private var dashboardGeneratedAt = Date()
@@ -30,9 +31,11 @@ final class DemoAPIClient: WorkflowAPI {
 
     // Create this object with the dependencies or state it needs; avoid hidden global services.
     init(
-        profileProvider: @escaping () -> UserProfile?
+        profileProvider: @escaping () -> UserProfile?,
+        staffDirectory: DemoStaffDirectory? = nil
     ) {
         self.profileProvider = profileProvider
+        self.staffDirectory = staffDirectory ?? DemoStaffDirectory()
         seed()
     }
 
@@ -62,7 +65,7 @@ final class DemoAPIClient: WorkflowAPI {
     func fetchMyShift() async throws -> MyShiftResponse {
         // Obtain the signed-in user before exposing any private data.
         guard let profile = profileProvider(),
-              profile.role == .employee,
+              (profile.role == .employee || profile.role == .supervisor),
               let employeeID = profile.employeeID,
               let row = shiftRows.values.first(
                 where: { $0.employeeID == employeeID }
@@ -101,7 +104,7 @@ final class DemoAPIClient: WorkflowAPI {
     ) async throws -> RecordShiftEventResponse {
         // Obtain the signed-in user before exposing any private data.
         guard let profile = profileProvider(),
-              profile.role == .employee,
+              (profile.role == .employee || profile.role == .supervisor),
               let employeeID = profile.employeeID,
               let row = shiftRows[request.shiftAssignmentID],
               row.employeeID == employeeID else {
@@ -150,11 +153,10 @@ final class DemoAPIClient: WorkflowAPI {
     // Load named shifts, assigned staff and available employees with department scoping.
     func fetchShiftRoster() async throws -> ShiftRosterResponse {
         try requireSupervisor()
-        let employees = shiftRows.values.map { row in
-            RosterEmployee(
-                id: row.employeeID, employeeNumber: row.employeeNumber,
-                employeeName: row.employeeName, department: row.department
-            )
+        let employees = staffDirectory.members.compactMap { member -> RosterEmployee? in
+            guard member.isActive, let id = member.employeeID, let department = member.department else { return nil }
+            return RosterEmployee(id: id, employeeNumber: member.employeeNumber,
+                employeeName: member.name, department: department)
         }
         // One supervisor sees only their department; HR/admin see all five.
         let profile = profileProvider()!
@@ -197,11 +199,12 @@ final class DemoAPIClient: WorkflowAPI {
     func assignWorkShift(_ request: AssignWorkShiftRequest) async throws -> WorkShiftAssignment {
         try requireSupervisor()
         guard let shift = workShifts[request.shiftID],
-              let employee = shiftRows.values.first(where: { $0.employeeID == request.employeeID }),
+              let employee = staffDirectory.members.first(where: { $0.employeeID == request.employeeID && $0.isActive }),
               employee.department == shift.department else {
             throw DemoError.unauthorized
         }
         try requireDepartment(shift.department)
+        let rowID = shiftRows.values.first { $0.employeeID == request.employeeID }?.id ?? UUID()
         // One active daily schedule per employee. Reject duplicate assignments.
         let existing = rosterAssignments.values.first { assignment in
             assignment.employeeID == request.employeeID &&
@@ -210,16 +213,16 @@ final class DemoAPIClient: WorkflowAPI {
         guard existing == nil else { throw DemoError.duplicateShiftAssignment }
 
         let assignment = WorkShiftAssignment(
-            id: UUID(), employeeID: employee.employeeID,
+            id: UUID(), employeeID: request.employeeID,
             employeeNumber: employee.employeeNumber,
-            employeeName: employee.employeeName, shiftID: shift.id
+            employeeName: employee.name, shiftID: shift.id
         )
         rosterAssignments[assignment.id] = assignment
         // Sync this person's concrete daily schedule with the assigned shift.
         let updated = SupervisorScheduleRow(
-            id: employee.id, employeeID: employee.employeeID,
+            id: rowID, employeeID: request.employeeID,
             employeeNumber: employee.employeeNumber,
-            employeeName: employee.employeeName, department: employee.department,
+            employeeName: employee.name, department: shift.department,
             shiftStart: shift.startTime, break1Start: shift.break1Start,
             lunchStart: shift.lunchStart, break2Start: shift.break2Start,
             shiftEnd: shift.endTime,
@@ -227,7 +230,7 @@ final class DemoAPIClient: WorkflowAPI {
             lunchDurationMinutes: shift.lunchDurationMinutes,
             break1AdjustmentReason: nil, break2AdjustmentReason: nil
         )
-        shiftRows[employee.id] = updated
+        shiftRows[rowID] = updated
         return assignment
     }
 
@@ -611,6 +614,45 @@ final class DemoAPIClient: WorkflowAPI {
         seed()
     }
 
+    func fetchStaff() async throws -> [StaffMember] {
+        try requireHR()
+        if let error = staffDirectory.loadError { throw error }
+        return staffDirectory.members.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+    }
+
+    func saveStaff(_ member: StaffMember) async throws -> StaffMember {
+        try requireHR()
+        let saved = try staffDirectory.save(member)
+        synchronizeStaff()
+        return saved
+    }
+
+    /// Transfers/deactivation unassign current demo schedules. Historical weekly packets
+    /// and break events remain intact; HR must explicitly assign a new department shift.
+    private func synchronizeStaff() {
+        let active = staffDirectory.members.filter { $0.isActive && $0.employeeID != nil }
+        for (id, row) in shiftRows {
+            guard let member = active.first(where: { $0.employeeID == row.employeeID }),
+                  member.department == row.department else {
+                shiftRows.removeValue(forKey: id)
+                continue
+            }
+            shiftRows[id] = SupervisorScheduleRow(id: row.id, employeeID: row.employeeID,
+                employeeNumber: member.employeeNumber, employeeName: member.name, department: row.department,
+                shiftStart: row.shiftStart, break1Start: row.break1Start, lunchStart: row.lunchStart,
+                break2Start: row.break2Start, shiftEnd: row.shiftEnd,
+                restBreakDurationMinutes: row.restBreakDurationMinutes, lunchDurationMinutes: row.lunchDurationMinutes,
+                break1AdjustmentReason: row.break1AdjustmentReason, break2AdjustmentReason: row.break2AdjustmentReason)
+        }
+        rosterAssignments = rosterAssignments.filter { _, assignment in
+            active.contains { $0.employeeID == assignment.employeeID && $0.department == workShifts[assignment.shiftID]?.department }
+        }.mapValues { assignment in
+            let member = active.first { $0.employeeID == assignment.employeeID }!
+            return WorkShiftAssignment(id: assignment.id, employeeID: assignment.employeeID,
+                employeeNumber: member.employeeNumber, employeeName: member.name, shiftID: assignment.shiftID)
+        }
+    }
+
     // MARK: - Seed
 
     private func seed() {
@@ -618,6 +660,7 @@ final class DemoAPIClient: WorkflowAPI {
         seedDailySchedules()
         seedNamedShifts() // Seed Morning/Evening/Night roster examples.
         seedWeeklyTimesheets()
+        synchronizeStaff()
     }
 
     private func seedDailySchedules() {
@@ -639,9 +682,7 @@ final class DemoAPIClient: WorkflowAPI {
         for department in Department.allCases {
             for index in 0..<6 {
                 let serial = department.sortOrder * 6 + index + 1
-                let employeeID = serial == 1
-                    ? UUID(uuidString: "11111111-1111-1111-1111-111111111111")!
-                    : UUID()
+                let employeeID = DemoStaffDirectory.employeeID(serial: serial)
                 let dayStart = calendar.date(
                     bySettingHour: 7, minute: 0, second: 0, of: today
                 )!

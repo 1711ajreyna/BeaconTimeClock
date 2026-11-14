@@ -13,7 +13,8 @@ enum APIClientFactory {
             return DemoAPIClient(
                 profileProvider: {
                     auth.demoProfile
-                }
+                },
+                staffDirectory: auth.staffDirectory
             )
         }
 

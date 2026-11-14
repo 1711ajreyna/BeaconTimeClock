@@ -92,7 +92,6 @@ struct AuthenticatedRootView: View {
         }
         .task {
             beacon.requestPermissionAndStart()
-            await lunch.requestNotificationPermission()
             await services.notificationScheduler.requestPermission()
         }
     }

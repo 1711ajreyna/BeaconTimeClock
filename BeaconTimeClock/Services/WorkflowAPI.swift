@@ -9,6 +9,8 @@ import Foundation
 @MainActor
 // Both DemoAPIClient and ProductionAPIClient must satisfy this contract.
 protocol WorkflowAPI: AnyObject {
+    func fetchStaff() async throws -> [StaffMember]
+    func saveStaff(_ member: StaffMember) async throws -> StaffMember
     // Identity / role
     // Return the authenticated employee/role profile.
     func fetchMyProfile() async throws -> UserProfile
@@ -83,4 +85,10 @@ protocol WorkflowAPI: AnyObject {
 
     // Demo reset
     func resetDemoData() async
+}
+
+// Production support stays unavailable until server-authorized endpoints exist.
+extension WorkflowAPI {
+    func fetchStaff() async throws -> [StaffMember] { throw StaffError.unavailable }
+    func saveStaff(_ member: StaffMember) async throws -> StaffMember { throw StaffError.unavailable }
 }

@@ -24,6 +24,7 @@ final class AuthManager: ObservableObject {
     // Notify SwiftUI subscribers whenever this stored state changes.
     @Published var isWorking = false
 
+    let staffDirectory: DemoStaffDirectory
     private let supabase: SupabaseClient?
     private var authListenerTask: Task<Void, Never>?
 
@@ -32,9 +33,11 @@ final class AuthManager: ObservableObject {
 
     // Create this object with the dependencies or state it needs; avoid hidden global services.
     init(
-        supabase: SupabaseClient?
+        supabase: SupabaseClient?,
+        staffDirectory: DemoStaffDirectory? = nil
     ) {
         self.supabase = supabase
+        self.staffDirectory = staffDirectory ?? DemoStaffDirectory(defaults: .standard)
     }
 
     deinit {
@@ -98,9 +101,9 @@ final class AuthManager: ObservableObject {
         // Choose the explicit demo path; production must use real backend controls.
         if AppConfig.demoMode {
             guard password == AppConfig.demoPassword,
-                  Self.demoRole(for: email) != nil else {
+                  staffDirectory.profile(email: email) != nil else {
                 errorMessage =
-                    "Use one of the documented demo accounts and Demo123!."
+                    staffDirectory.loadError?.localizedDescription ?? "Use an active demo staff email and Demo123!."
                 return
             }
 
@@ -172,34 +175,21 @@ final class AuthManager: ObservableObject {
     }
 
     var demoProfile: UserProfile? {
-        guard AppConfig.demoMode,
-              let email,
-              let role = Self.demoRole(for: email) else {
-            return nil
-        }
-
-        return UserProfile(
-            id: userID ?? UUID(),
-            displayName: Self.demoDisplayName(for: role),
-            email: email,
-            role: role,
-            employeeID: role == .employee ? Self.demoEmployeeID : nil,
-            employeeNumber: role == .employee ? "EMP-001" : nil,
-            department: role == .employee ? .electrical : Self.demoDepartment(for: email)
-        )
+        guard AppConfig.demoMode, let email else { return nil }
+        return staffDirectory.profile(email: email)
     }
 
-    private func applyDemoSession(
-        email: String
-    ) {
-        guard Self.demoRole(for: email) != nil else {
+    private func applyDemoSession(email: String) {
+        guard let profile = staffDirectory.profile(email: email) else {
+            userID = nil
+            self.email = nil
             state = .signedOut
+            errorMessage = staffDirectory.loadError?.localizedDescription ?? "This demo account is inactive or unavailable."
             return
         }
-
-        self.userID = Self.demoUserID(for: email)
-        self.email = email.lowercased()
-        self.state = .signedIn
+        userID = profile.id
+        self.email = profile.email
+        state = .signedIn
     }
 
     private func applyProductionSession(
@@ -217,79 +207,4 @@ final class AuthManager: ObservableObject {
         state = .signedIn
     }
 
-    private static let demoEmployeeID = UUID(
-        uuidString: "11111111-1111-1111-1111-111111111111"
-    )!
-
-    private static func demoRole(
-        for email: String
-    ) -> UserRole? {
-        switch email.lowercased() {
-        case AppConfig.demoEmployeeEmail:
-            return .employee
-        case AppConfig.demoSupervisorEmail,
-             AppConfig.demoMachineShopSupervisorEmail,
-             AppConfig.demoMetalsSupervisorEmail,
-             AppConfig.demoPlasticsSupervisorEmail,
-             AppConfig.demoLithoSupervisorEmail:
-            return .supervisor
-        case AppConfig.demoAdminEmail:
-            return .admin
-        case AppConfig.demoHREmail:
-            return .hr
-        default:
-            return nil
-        }
-    }
-
-    /// Demo supervisor's assignment comes from a known local login, not a
-    /// department text field. Production assignment must be server-verified.
-    private static func demoDepartment(for email: String) -> Department? {
-        switch email.lowercased() {
-        case AppConfig.demoSupervisorEmail: return .electrical
-        case AppConfig.demoMachineShopSupervisorEmail: return .machineShop
-        case AppConfig.demoMetalsSupervisorEmail: return .metals
-        case AppConfig.demoPlasticsSupervisorEmail: return .plastics
-        case AppConfig.demoLithoSupervisorEmail: return .litho
-        default: return nil
-        }
-    }
-
-    private static func demoDisplayName(
-        for role: UserRole
-    ) -> String {
-        switch role {
-        case .employee:
-            return "Demo Employee"
-        case .supervisor:
-            return "Demo Supervisor"
-        case .hr:
-            return "Demo HR"
-        case .admin:
-            return "Demo Administrator"
-        }
-    }
-
-    private static func demoUserID(
-        for email: String
-    ) -> UUID {
-        switch demoRole(for: email) {
-        case .employee:
-            return demoEmployeeID
-        case .supervisor:
-            let department = demoDepartment(for: email) ?? .electrical
-            return UUID(uuidString: String(
-                format: "22222222-2222-2222-2222-%012d",
-                department.sortOrder + 1
-            ))!
-        case .hr:
-            return UUID(uuidString: "44444444-4444-4444-4444-444444444444")!
-        case .admin:
-            return UUID(
-                uuidString: "33333333-3333-3333-3333-333333333333"
-            )!
-        default:
-            return UUID()
-        }
-    }
 }

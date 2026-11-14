@@ -7,6 +7,7 @@ struct AccountView: View {
 
     // Read a shared dependency injected by BeaconTimeClockApp; do not create it here.
     @EnvironmentObject private var auth: AuthManager
+    @EnvironmentObject private var services: AppServices
 
     // The SwiftUI body describes the visible screen from the current state.
     var body: some View {
@@ -56,6 +57,13 @@ struct AccountView: View {
                             "Employee #",
                             value: number
                         )
+                    }
+                }
+
+                if AppConfig.demoMode && profile.canAccessPayroll {
+                    Section("HR Management") {
+                        NavigationLink("Manage Staff") { StaffManagementView(api: services.api) }
+                            .accessibilityIdentifier("manage_staff_link")
                     }
                 }
 

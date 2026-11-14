@@ -4,6 +4,7 @@ import SwiftUI
 /// Authentication gate for the entire application.
 // This type groups related state and behavior under a clear responsibility.
 struct RootView: View {
+    @Environment(\.scenePhase) private var scenePhase
     // Read a shared dependency injected by BeaconTimeClockApp; do not create it here.
     @EnvironmentObject private var auth: AuthManager
     // Read a shared dependency injected by BeaconTimeClockApp; do not create it here.
@@ -44,6 +45,13 @@ struct RootView: View {
             await auth.bootstrap()
             if auth.state == .signedIn {
                 await services.loadProfile()
+            }
+        }
+        .onChange(of: scenePhase) { _, phase in
+            guard phase == .active else { return }
+            Task {
+                if AppConfig.demoMode { await auth.bootstrap() }
+                if auth.state == .signedIn { await services.loadProfile() }
             }
         }
         .onChange(of: auth.state) { _, newState in

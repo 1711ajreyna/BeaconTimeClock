@@ -1,32 +1,16 @@
-//
-//  BeaconTimeClockUITestsLaunchTests.swift
-//  BeaconTimeClockUITests
-//
-//  Created by Andrew Reyna on 10/17/26.
-//
-
 import XCTest
 
 final class BeaconTimeClockUITestsLaunchTests: XCTestCase {
-
-    override class var runsForEachTargetApplicationUIConfiguration: Bool {
-        true
-    }
-
-    override func setUpWithError() throws {
-        continueAfterFailure = false
-    }
-
     @MainActor
-    func testLaunch() throws {
+    func testLoginScreenLaunches() {
+        continueAfterFailure = false
         let app = XCUIApplication()
+        app.launchArguments = ["-UITesting-Reset", "-UITesting-NoAnimations", "-BeaconTimeClock.language", "en"]
         app.launch()
-
-        // Insert steps here to perform after app launch but before taking a screenshot,
-        // such as logging into a test account or navigating somewhere in the app
-
+        XCTAssertTrue(app.textFields["email_field"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.secureTextFields["password_field"].exists)
         let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "Launch Screen"
+        attachment.name = "Login Screen"
         attachment.lifetime = .keepAlways
         add(attachment)
     }

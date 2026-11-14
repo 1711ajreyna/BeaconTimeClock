@@ -113,3 +113,7 @@ struct ApproveDepartmentResponse: Codable {
     /// Optional confirmation message.
     let message: String?
 }
+
+struct BasicAPIResponse: Codable {
+    let success: Bool
+}
