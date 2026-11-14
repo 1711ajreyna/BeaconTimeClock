@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct StaffManagementView: View {
+    let profile: UserProfile
     let api: WorkflowAPI
     @State private var members: [StaffMember] = []
     @State private var query = ""
@@ -10,7 +11,7 @@ struct StaffManagementView: View {
 
     private var filtered: [StaffMember] {
         members.filter {
-            ($0.role == .employee || $0.role == .supervisor) &&
+            profile.canSaveStaff($0, existing: $0) &&
             (query.isEmpty || "\($0.name) \($0.email) \($0.employeeNumber)".localizedCaseInsensitiveContains(query))
         }
     }
@@ -18,7 +19,9 @@ struct StaffManagementView: View {
     var body: some View {
         List {
             Section {
-                Text("Demo staff are saved on this device. Use their email and Demo123! to sign in. No invitations are sent.")
+                Text(AppConfig.demoMode
+                     ? "DEMO ONLY: Staff use their email and Demo123!."
+                     : "LIVE: New staff are invited by email. Requires secure deployed staff-list and staff-save functions.")
                     .font(.footnote).foregroundStyle(.secondary)
             }
             if loading { ProgressView("Loading staff…") }
@@ -43,16 +46,20 @@ struct StaffManagementView: View {
         .searchable(text: $query, prompt: "Name, email, or employee number")
         .toolbar {
             Button { editing = StaffMember(id: UUID(), employeeID: nil, name: "", email: "",
-                employeeNumber: "", role: .employee, department: .electrical, isActive: true) } label: {
+                employeeNumber: "", role: .employee,
+                department: profile.role == .supervisor ? profile.department : .electrical,
+                isActive: true) } label: {
                 Label("Add Staff", systemImage: "plus")
             }
             .accessibilityIdentifier("add_staff_button")
-            .disabled(loading || errorMessage != nil)
+            .disabled(!profile.canManageStaffAccounts || loading || errorMessage != nil)
         }
         .task { await load() }
         .refreshable { await load() }
         .sheet(item: $editing) { member in
-            StaffEditor(member: member, isNew: !members.contains { $0.id == member.id }, api: api) {
+            StaffEditor(member: member, isNew: !members.contains { $0.id == member.id },
+                        originalMember: members.first { $0.id == member.id },
+                        profile: profile, api: api) {
                 await load()
             }
         }
@@ -70,6 +77,9 @@ private struct StaffEditor: View {
     @Environment(\.dismiss) private var dismiss
     @State var member: StaffMember
     let isNew: Bool
+    /// Original server/demo state; compare edits against this, not the modified form.
+    let originalMember: StaffMember?
+    let profile: UserProfile
     let api: WorkflowAPI
     let didSave: () async -> Void
     @State private var saving = false
@@ -83,18 +93,27 @@ private struct StaffEditor: View {
                     TextField("Name", text: $member.name).accessibilityIdentifier("staff_name")
                     TextField("Email", text: $member.email)
                         .textInputAutocapitalization(.never).autocorrectionDisabled().keyboardType(.emailAddress)
+                        .disabled(!isNew && !AppConfig.demoMode)
                         .accessibilityIdentifier("staff_email")
                     TextField("Employee Number", text: $member.employeeNumber)
                         .disabled(!isNew).accessibilityIdentifier("staff_number")
                     if !isNew { Text("Employee numbers stay fixed to preserve timecard history.").font(.caption) }
                 }
                 Section("Company Access") {
-                    Picker("Role", selection: $member.role) {
-                        Text("Employee").tag(UserRole.employee)
-                        Text("Supervisor").tag(UserRole.supervisor)
-                    }
-                    Picker("Department", selection: $member.department) {
-                        ForEach(Department.allCases) { Text($0.displayName).tag(Optional($0)) }
+                    if profile.role == .hr {
+                        Picker("Role", selection: $member.role) {
+                            Text("Employee").tag(UserRole.employee)
+                            Text("Supervisor").tag(UserRole.supervisor)
+                        }
+                        .accessibilityIdentifier("staff_role_picker")
+                        Picker("Department", selection: $member.department) {
+                            ForEach(Department.allCases) { Text($0.displayName).tag(Optional($0)) }
+                        }
+                    } else {
+                        LabeledContent("Role", value: "Employee")
+                        LabeledContent("Department", value: profile.department?.displayName ?? "Unassigned")
+                        Text("Only HR can create, promote, or edit supervisors.")
+                            .font(.caption).foregroundStyle(.secondary)
                     }
                     Toggle("Active", isOn: $member.isActive)
                     Text("Changing departments or deactivating staff removes their current demo shift assignment. Historical payroll records are preserved. Assign a new shift from Shift Rosters.")
@@ -124,7 +143,14 @@ private struct StaffEditor: View {
     private func save() async {
         saving = true
         defer { saving = false }
-        do { _ = try await api.saveStaff(member); await didSave(); dismiss() }
+        do {
+            guard profile.canSaveStaff(member, existing: originalMember) else {
+                throw DemoAPIClient.DemoError.unauthorized
+            }
+            _ = try await api.saveStaff(member)
+            await didSave()
+            dismiss()
+        }
         catch { errorMessage = error.localizedDescription }
     }
 }

@@ -150,6 +150,9 @@
         }
       }
     },
+    "Actually approved" : {
+
+    },
     "Add %@" : {
       "localizations" : {
         "es" : {
@@ -260,6 +263,9 @@
           }
         }
       }
+    },
+    "App Store checklist: set real PRIVACY_POLICY_URL and SUPPORT_URL in the target's Info settings." : {
+
     },
     "Approval" : {
       "localizations" : {
@@ -707,7 +713,17 @@
         }
       }
     },
+    "DEMO ONLY: 5 simulated approvals shown. Real approvals are unchanged." : {
+
+    },
+    "Demo only: clears this supervisor's department approval, signature and timestamp. Other departments and timecard history are untouched." : {
+
+    },
+    "DEMO ONLY: Staff use their email and Demo123!." : {
+
+    },
     "Demo PDF Preview" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -718,6 +734,7 @@
       }
     },
     "Demo staff are saved on this device. Use their email and Demo123! to sign in. No invitations are sent." : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -746,6 +763,9 @@
           }
         }
       }
+    },
+    "Demonstration approvals only" : {
+
     },
     "Demonstration Mode" : {
       "localizations" : {
@@ -1139,6 +1159,9 @@
         }
       }
     },
+    "End Demo Approval Simulation" : {
+
+    },
     "End Time" : {
       "localizations" : {
         "es" : {
@@ -1271,6 +1294,7 @@
       }
     },
     "Generates five simulated, signed example forms for class demonstrations only. No real payroll is sent or approved." : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -1279,6 +1303,9 @@
           }
         }
       }
+    },
+    "Help & Support" : {
+
     },
     "Hour" : {
       "localizations" : {
@@ -1301,6 +1328,9 @@
         }
       }
     },
+    "HR can create employees and supervisors in any department." : {
+
+    },
     "HR delivery confirmed" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1313,6 +1343,7 @@
       }
     },
     "HR Management" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -1399,6 +1430,7 @@
       }
     },
     "Litho" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -1407,6 +1439,9 @@
           }
         }
       }
+    },
+    "LIVE: New staff are invited by email. Requires secure deployed staff-list and staff-save functions." : {
+
     },
     "Loading" : {
       "extractionState" : "stale",
@@ -1562,6 +1597,7 @@
       }
     },
     "Machine Shop" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -1581,6 +1617,9 @@
         }
       }
     },
+    "Manage Staff Accounts" : {
+
+    },
     "MANUFACTURING · SINCE 1947" : {
       "localizations" : {
         "es" : {
@@ -1592,6 +1631,7 @@
       }
     },
     "Metals" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -1845,6 +1885,9 @@
         }
       }
     },
+    "Only HR can create, promote, or edit supervisors." : {
+
+    },
     "Open" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1901,6 +1944,7 @@
 
     },
     "Other department supervisors" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -1991,7 +2035,11 @@
         }
       }
     },
+    "Payroll PDF Filename" : {
+
+    },
     "Plastics" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -2069,6 +2117,12 @@
         }
       }
     },
+    "Privacy & Support" : {
+
+    },
+    "Privacy Policy" : {
+
+    },
     "Production sessions are restored automatically after relaunch while the refresh session remains valid. Face ID/Touch ID is still required for sensitive attendance actions." : {
       "localizations" : {
         "es" : {
@@ -2129,6 +2183,9 @@
           }
         }
       }
+    },
+    "Real departmental approvals remain restricted to each assigned supervisor; HR cannot sign for them." : {
+
     },
     "Reason for changing this employee's Break 1" : {
       "localizations" : {
@@ -2253,6 +2310,9 @@
         }
       }
     },
+    "Report heading" : {
+
+    },
     "Required reason" : {
       "localizations" : {
         "es" : {
@@ -2263,7 +2323,14 @@
         }
       }
     },
+    "Reset heading to PAYROLL" : {
+
+    },
+    "Reset My Department Approval (Demo)" : {
+
+    },
     "Reset Weekly Demo" : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -2477,6 +2544,9 @@
         }
       }
     },
+    "Saved filename" : {
+
+    },
     "Saving…" : {
       "localizations" : {
         "es" : {
@@ -2529,6 +2599,9 @@
       }
     },
     "Share or Save Prepared CSV" : {
+
+    },
+    "Share WATERMARKED Demo PDF" : {
 
     },
     "Shift" : {
@@ -2633,6 +2706,9 @@
         }
       }
     },
+    "Show Five Simulated Approvals" : {
+
+    },
     "Sign In" : {
       "localizations" : {
         "es" : {
@@ -2662,6 +2738,15 @@
           }
         }
       }
+    },
+    "Simulate All Five Approvals (Demo Only)" : {
+
+    },
+    "Simulated for HR demo" : {
+
+    },
+    "Simulation affects this HR screen and the demonstration PDF only. No department's real status, signature or server record is changed." : {
+
     },
     "Some departments still need approval or delivery" : {
       "extractionState" : "stale",
@@ -2694,6 +2779,9 @@
           }
         }
       }
+    },
+    "Staff Accounts" : {
+
     },
     "Staff Details" : {
       "localizations" : {
@@ -2777,6 +2865,9 @@
         }
       }
     },
+    "Supervisors can create and edit employees in their own department only." : {
+
+    },
     "The app defaults paid rest breaks near the middle of each work period. A supervisor may stagger an individual employee's break when operationally necessary, but the backend keeps Break 1 in the first work period and Break 2 in the second." : {
       "localizations" : {
         "es" : {
@@ -2817,6 +2908,9 @@
         }
       }
     },
+    "The editable heading is saved on this device. The Sunday date comes from the selected pay-period records: never change it just to rename a signed report. Choose the correct weekly packet to change the date. PDF title uses DD/MM/YYYY; filenames use DD-MM-YYYY because '/' is invalid in a filename." : {
+
+    },
     "The next expected action is" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -2847,6 +2941,9 @@
           }
         }
       }
+    },
+    "This changes only the HR demo display and read-only PDF. No supervisor approvals, signatures, or actual payroll exports are created." : {
+
     },
     "This locks the department packet. Further punch changes require an administrative reopen workflow." : {
       "localizations" : {
@@ -2890,6 +2987,9 @@
         }
       }
     },
+    "Title inside PDF" : {
+
+    },
     "Today's Schedule" : {
       "localizations" : {
         "es" : {
@@ -2909,6 +3009,15 @@
           }
         }
       }
+    },
+    "Trial accounts are preloaded and isolated by department. Employees cannot create accounts; supervisors add employees only in their department; only HR creates supervisors." : {
+
+    },
+    "Trial employee by department" : {
+
+    },
+    "Trial supervisor by department" : {
+
     },
     "Type" : {
       "localizations" : {
@@ -2961,7 +3070,11 @@
         }
       }
     },
+    "Use 1–35 letters, numbers, spaces, underscores or hyphens." : {
+
+    },
     "Use this after demonstrating punch corrections and approvals so the five departments return to their starting state." : {
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -3002,6 +3115,9 @@
       }
     },
     "Week %@" : {
+
+    },
+    "Week-ending Sunday" : {
 
     },
     "Work date" : {

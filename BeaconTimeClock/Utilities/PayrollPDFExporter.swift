@@ -17,41 +17,57 @@ enum PayrollPDFExporter {
     /// One summary FORM starts each department section, followed by employee
     /// daily detail pages. A single-department export produces only that form.
     // Draw a PDF file and return a file URL for preview or sharing.
-    static func export(sheets: [DepartmentTimesheet]) throws -> URL {
+    static func export(sheets: [DepartmentTimesheet], demoPreview: Bool = false,
+                       heading: String = "PAYROLL") throws -> URL {
+        // Never make an unsigned/partial packet look like an approved payroll export.
         guard !sheets.isEmpty,
               Set(sheets.map(\.department)).count == sheets.count,
               let first = sheets.first,
               sheets.allSatisfy({
-                  ($0.status == .approved || $0.status == .sentToHR) &&
-                  $0.signaturePresent && $0.signedAt != nil &&
-                  !$0.hasUnresolvedExceptions &&
-                  $0.weekStart == first.weekStart &&
-                  $0.weekEnd == first.weekEnd
+                  $0.weekStart == first.weekStart && $0.weekEnd == first.weekEnd
               }) else { throw HRPayrollError.incomplete }
 
+        if demoPreview {
+            guard AppConfig.demoMode else { throw HRPayrollError.incomplete }
+        } else {
+            guard sheets.allSatisfy({
+                ($0.status == .approved || $0.status == .sentToHR) &&
+                $0.signaturePresent && $0.signedAt != nil &&
+                !$0.hasUnresolvedExceptions
+            }) else { throw HRPayrollError.incomplete }
+        }
+
+        // Reject inconsistent/non-Sunday week-end data instead of mislabeling payroll.
+        let title = try PayrollReportNaming.displayTitle(weekEnd: first.weekEnd, heading: heading)
         let period = "\(first.weekStart) to \(first.weekEnd)"
         // Use Apple's PDF renderer to create a shareable payroll document.
-        let renderer = UIGraphicsPDFRenderer(bounds: paper)
+        let format = UIGraphicsPDFRendererFormat()
+        format.documentInfo = [kCGPDFContextTitle as String: title]
+        let renderer = UIGraphicsPDFRenderer(bounds: paper, format: format)
         let data = renderer.pdfData { context in
             var pageNo = 0
             for sheet in sheets.sorted(by: {
                 $0.department.sortOrder < $1.department.sortOrder
             }) {
-                writeDepartmentForm(sheet, period: period,
-                                    context: context, pageNo: &pageNo)
+                writeDepartmentForm(sheet, period: period, reportTitle: title,
+                                    context: context, pageNo: &pageNo,
+                                    demoPreview: demoPreview)
                 for employee in sheet.employees.sorted(by: {
                     $0.employeeID < $1.employeeID
                 }) {
-                    writeDailyDetail(employee, sheet: sheet, period: period,
-                                     context: context, pageNo: &pageNo)
+                    writeDailyDetail(employee, sheet: sheet, period: period, reportTitle: title,
+                                     context: context, pageNo: &pageNo,
+                                     demoPreview: demoPreview)
                 }
             }
         }
 
         // Use a unique file to avoid accidentally sharing an older pay period.
-        let fileName = sheets.count == 1
-            ? "Beacon_\(sheets[0].department.rawValue)_HR_\(first.weekStart).pdf"
-            : "Beacon_All_5_Departments_HR_\(first.weekStart).pdf"
+        let fileName = try PayrollReportNaming.fileName(
+            weekEnd: first.weekEnd, heading: heading,
+            department: sheets.count == 1 ? sheets.first?.department : nil,
+            demoPreview: demoPreview
+        )
         let url = FileManager.default.temporaryDirectory
             .appendingPathComponent(UUID().uuidString, isDirectory: true)
         try FileManager.default.createDirectory(at: url,
@@ -63,13 +79,19 @@ enum PayrollPDFExporter {
 
     // Start an individual department form with totals and HR entry fields.
     private static func writeDepartmentForm(
-        _ sheet: DepartmentTimesheet, period: String,
-        context: UIGraphicsPDFRendererContext, pageNo: inout Int
+        _ sheet: DepartmentTimesheet, period: String, reportTitle: String,
+        context: UIGraphicsPDFRendererContext, pageNo: inout Int,
+        demoPreview: Bool
     ) {
         startPage(context, title: "\(sheet.department.displayName)  -  Payroll Entry Form",
-                  period: period, pageNo: &pageNo)
-        draw("ONE FORM PER DEPARTMENT  |  SUPERVISOR-APPROVED SOURCE", x: left, y: 91,
-             width: 710, font: .boldSystemFont(ofSize: 10))
+                  period: period, reportTitle: reportTitle,
+                  pageNo: &pageNo, demoPreview: demoPreview)
+        let approvalText = demoPreview
+            ? "READ-ONLY DEMO PREVIEW | NOT APPROVED FOR PAYROLL"
+            : "ONE FORM PER DEPARTMENT | SUPERVISOR-APPROVED SOURCE"
+        draw(approvalText, x: left, y: 91,
+             width: 710, font: .boldSystemFont(ofSize: 10),
+             color: demoPreview ? .systemRed : .black)
         draw("Supervisor: \(sheet.supervisorName ?? "-")", x: left, y: 113,
              width: 360, font: .systemFont(ofSize: 10))
         draw("Signed: \(sheet.signedAt.map { dateTime($0) } ?? "-")", x: 403,
@@ -87,7 +109,8 @@ enum PayrollPDFExporter {
             if y + 26 > maxY {
                 // Handles departments larger than the six employee demo set.
                 startPage(context, title: "\(sheet.department.displayName) Form (continued)",
-                          period: period, pageNo: &pageNo)
+                          period: period, reportTitle: reportTitle,
+                          pageNo: &pageNo, demoPreview: demoPreview)
                 tableHeader(["Emp. ID", "Employee", "Regular h", "OT h", "Total h", "Entered?", "HR Initial"],
                             widths: widths, y: 91)
                 y = 118
@@ -101,7 +124,8 @@ enum PayrollPDFExporter {
         y += 12
         if y + 95 > maxY {
             startPage(context, title: "\(sheet.department.displayName) Sign-off (continued)",
-                      period: period, pageNo: &pageNo)
+                      period: period, reportTitle: reportTitle,
+                      pageNo: &pageNo, demoPreview: demoPreview)
             y = 98
         }
         draw("DEPARTMENT TOTAL", x: left, y: y, width: 200,
@@ -121,15 +145,20 @@ enum PayrollPDFExporter {
     // Produce the daily punches and break rows for a payroll PDF.
     private static func writeDailyDetail(
         _ employee: EmployeeWeeklySummary, sheet: DepartmentTimesheet,
-        period: String, context: UIGraphicsPDFRendererContext, pageNo: inout Int
+        period: String, reportTitle: String,
+        context: UIGraphicsPDFRendererContext, pageNo: inout Int,
+        demoPreview: Bool
     ) {
         startPage(context, title: "\(sheet.department.displayName)  /  \(employee.employeeName)",
-                  period: period, pageNo: &pageNo)
+                  period: period, reportTitle: reportTitle,
+                  pageNo: &pageNo, demoPreview: demoPreview)
         draw("Employee ID: \(employee.employeeID)   |   " +
              "Regular: \(hours(employee.regularHours))   OT: \(hours(employee.overtimeHours))" +
              "   Total: \(hours(employee.totalHours))", x: left, y: 90,
              width: 720, font: .boldSystemFont(ofSize: 10))
-        draw("Approved punch timestamps (Pacific). Breaks are paid; lunch is separate.",
+        draw(demoPreview
+             ? "UNAPPROVED DEMO DATA (Pacific). Breaks are paid; lunch is separate."
+             : "Approved punch timestamps (Pacific). Breaks are paid; lunch is separate.",
              x: left, y: 111, width: 720, font: .systemFont(ofSize: 9))
 
         let columns: [CGFloat] = [91, 89, 89, 89, 89, 89, 89, 103]
@@ -176,14 +205,19 @@ enum PayrollPDFExporter {
     }
 
     private static func startPage(_ context: UIGraphicsPDFRendererContext,
-                                  title: String, period: String,
-                                  pageNo: inout Int) {
+                                  title: String, period: String, reportTitle: String,
+                                  pageNo: inout Int, demoPreview: Bool) {
         context.beginPage()
         pageNo += 1
         UIColor(red: 0.12, green: 0.19, blue: 0.31, alpha: 1).setFill()
         UIRectFill(CGRect(x: 0, y: 0, width: 792, height: 9))
-        draw("BEACONTIMECLOCK / HR PAYROLL", x: left, y: 20, width: 500,
+        draw(reportTitle, x: left, y: 20, width: 390,
              font: .boldSystemFont(ofSize: 15))
+        if demoPreview {
+            draw("DEMO PREVIEW - NOT AN APPROVAL", x: 428, y: 20,
+                 width: 330, font: .boldSystemFont(ofSize: 10), color: .systemRed,
+                 alignment: .right)
+        }
         draw(title, x: left, y: 45, width: 560,
              font: .boldSystemFont(ofSize: 12))
         draw(period, x: 594, y: 48, width: 164,

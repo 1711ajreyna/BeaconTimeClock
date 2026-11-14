@@ -10,8 +10,8 @@ final class BeaconTimeClockTests: XCTestCase {
             let profile = UserProfile(id: UUID(), displayName: "Tester", email: "test@example.com",
                 role: role, employeeID: nil, employeeNumber: nil, department: .electrical)
             XCTAssertEqual(profile.canAccessPayroll, role == .hr || role == .admin)
-            XCTAssertEqual(profile.canManageDepartment(.electrical), role != .employee)
-            XCTAssertEqual(profile.canManageDepartment(.metals), role == .hr || role == .admin)
+            XCTAssertEqual(profile.canManageDepartment(.electrical), role == .supervisor)
+            XCTAssertFalse(profile.canManageDepartment(.metals))
         }
     }
 }
@@ -201,7 +201,7 @@ final class DemoWorkflowTests: XCTestCase {
         catch { guard case DemoAPIClient.DemoError.duplicateEvent = error else { return XCTFail("Unexpected: \(error)") } }
     }
     func testAnotherEmployeesShiftCannotBeModified() async throws {
-        var user = profile(.admin)
+        var user = profile(.supervisor)
         let api = DemoAPIClient { user }
         let schedule = try await api.fetchSupervisorSchedule()
         let other = try XCTUnwrap(schedule.rows.first { $0.employeeNumber != "EMP-001" })
@@ -212,31 +212,28 @@ final class DemoWorkflowTests: XCTestCase {
             XCTFail("Cross-employee write accepted")
         } catch { guard case DemoAPIClient.DemoError.unauthorized = error else { return XCTFail("Unexpected: \(error)") } }
     }
-    func testHRPreparationMakesFiveSignedSheetsWithoutClaimingDelivery() async throws {
+    func testHRCanReadButCannotApproveOrResetDepartments() async throws {
         let user = profile(.hr)
         let api = DemoAPIClient { user }
-        try await api.prepareDemoHRPacket()
-        let packet = try await api.fetchHRPayrollPacket()
-        XCTAssertEqual(Set(packet.departments.map(\.department)), Set(Department.allCases))
-        XCTAssertTrue(packet.departments.allSatisfy { $0.status == .approved && $0.signaturePresent && $0.signedAt != nil })
-        let dashboard = try await api.fetchSupervisorDashboard()
-        XCTAssertEqual(dashboard.hrPacketStatus, .ready)
+        let before = try await api.fetchHRPayrollPacket()
+        XCTAssertEqual(Set(before.departments.map(\.department)), Set(Department.allCases))
+        do { try await api.prepareDemoHRPacket(); XCTFail("HR approved five departments") }
+        catch { guard case DemoAPIClient.DemoError.unauthorized = error else { return XCTFail("Unexpected: \(error)") } }
+        await api.resetDemoData()
+        let after = try await api.fetchHRPayrollPacket()
+        XCTAssertEqual(after.departments, before.departments)
         let status = try await api.fetchCompanySubmissionStatus()
         XCTAssertFalse(status.hrDeliveryConfirmed)
-        await api.resetDemoData()
-        let reset = try await api.fetchSupervisorDashboard()
-        XCTAssertEqual(reset.approvedCount, 0)
+        do { _ = try await api.fetchSupervisorDashboard(); XCTFail("HR accessed supervisor edits") }
+        catch { guard case DemoAPIClient.DemoError.unauthorized = error else { return XCTFail("Unexpected: \(error)") } }
     }
     func testApprovalUsesAuthenticatedNameAndLocksSheet() async throws {
-        let user = profile(.admin)
+        let user = profile(.supervisor)
         let api = DemoAPIClient { user }
         let dashboard = try await api.fetchSupervisorDashboard()
-        var sheet: DepartmentTimesheet?
-        for summary in dashboard.departments {
-            let candidate = try await api.fetchDepartmentTimesheet(timesheetID: summary.id)
-            if !candidate.hasUnresolvedExceptions { sheet = candidate; break }
-        }
-        let selected = try XCTUnwrap(sheet, "Demo needs at least one approvable department")
+        let summary = try XCTUnwrap(dashboard.departments.first)
+        let selected = try await api.fetchDepartmentTimesheet(timesheetID: summary.id)
+        XCTAssertFalse(selected.hasUnresolvedExceptions)
         let request = ApproveDepartmentRequest(timesheetID: selected.id,
             supervisorPrintedName: "Untrusted name", signaturePNGBase64: "demo-signature")
         let result = try await api.approveDepartment(request)
@@ -401,11 +398,11 @@ final class StaffManagementTests: XCTestCase {
         XCTAssertEqual(defaults.data(forKey: DemoStaffDirectory.storageKey), corrupt)
     }
 
-    func testEmployeeAndSupervisorCannotReadOrEditStaff() async throws {
+    func testEmployeeAndAdminCannotCreateStaff() async throws {
         let directory = DemoStaffDirectory()
         var current = directory.profile(email: AppConfig.demoEmployeeEmail)
         let api = DemoAPIClient(profileProvider: { current }, staffDirectory: directory)
-        for email in [AppConfig.demoEmployeeEmail, AppConfig.demoSupervisorEmail] {
+        for email in [AppConfig.demoEmployeeEmail, AppConfig.demoAdminEmail] {
             current = directory.profile(email: email)
             do { _ = try await api.fetchStaff(); XCTFail("Unauthorized read") }
             catch { guard case DemoAPIClient.DemoError.unauthorized = error else { return XCTFail("\(error)") } }
@@ -430,8 +427,10 @@ final class StaffManagementTests: XCTestCase {
 
     func testNewStaffAppearsInRosterBeforeSchedulingAndCanBeAssigned() async throws {
         let directory = DemoStaffDirectory()
-        let api = DemoAPIClient(profileProvider: { self.hr() }, staffDirectory: directory)
+        var current = hr()
+        let api = DemoAPIClient(profileProvider: { current }, staffDirectory: directory)
         let saved = try await api.saveStaff(newMember())
+        current = try XCTUnwrap(directory.profile(email: AppConfig.demoMetalsSupervisorEmail))
         let roster = try await api.fetchShiftRoster()
         XCTAssertTrue(roster.employees.contains { $0.id == saved.employeeID })
         XCTAssertFalse(roster.assignments.contains { $0.employeeID == saved.employeeID })
@@ -444,7 +443,8 @@ final class StaffManagementTests: XCTestCase {
 
     func testTransferAndDeactivationPreserveHistoryAndIdentity() async throws {
         let directory = DemoStaffDirectory()
-        let api = DemoAPIClient(profileProvider: { self.hr() }, staffDirectory: directory)
+        var current = hr()
+        let api = DemoAPIClient(profileProvider: { current }, staffDirectory: directory)
         let before = try await api.fetchHRPayrollPacket()
         var member = try XCTUnwrap(directory.members.first { $0.employeeNumber == "EMP-001" })
         let identity = member.employeeID
@@ -457,14 +457,17 @@ final class StaffManagementTests: XCTestCase {
         let profile = try XCTUnwrap(directory.profile(email: member.email))
         XCTAssertTrue(profile.canManageDepartment(.metals))
         XCTAssertFalse(profile.canManageDepartment(.electrical))
+        current = try XCTUnwrap(directory.profile(email: AppConfig.demoMetalsSupervisorEmail))
         let roster = try await api.fetchShiftRoster()
         XCTAssertFalse(roster.assignments.contains { $0.employeeID == identity })
         let after = try await api.fetchHRPayrollPacket()
         XCTAssertEqual(before.departments, after.departments)
         member = saved
         member.isActive = false
+        current = hr()
         _ = try await api.saveStaff(member)
         XCTAssertNil(directory.profile(email: member.email))
+        current = try XCTUnwrap(directory.profile(email: AppConfig.demoMetalsSupervisorEmail))
         let inactiveRoster = try await api.fetchShiftRoster()
         XCTAssertFalse(inactiveRoster.employees.contains { $0.id == identity })
     }
@@ -523,10 +526,18 @@ final class MDI2120RegressionTests: XCTestCase {
         let hr = UserProfile(id: UUID(), displayName: "HR Tester", email: "hr@test.com",
                              role: .hr, employeeID: nil, employeeNumber: nil, department: nil)
         let api = DemoAPIClient { hr }
-        try await api.prepareDemoHRPacket()
         let packet = try await api.fetchHRPayrollPacket()
-        let totalsURL = try PayrollCSVExporter.export(sheets: packet.departments, kind: .weeklyTotals)
-        let dailyURL = try PayrollCSVExporter.export(sheets: packet.departments, kind: .dailyPunches)
+        // Format-only test. Create signed copies *in memory*; never mutate department approvals.
+        let approvedCopies = packet.departments.map { source -> DepartmentTimesheet in
+            var sheet = source
+            sheet.status = .approved
+            sheet.supervisorName = "Formatting Fixture"
+            sheet.signedAt = Date()
+            sheet.signaturePresent = true
+            return sheet
+        }
+        let totalsURL = try PayrollCSVExporter.export(sheets: approvedCopies, kind: .weeklyTotals)
+        let dailyURL = try PayrollCSVExporter.export(sheets: approvedCopies, kind: .dailyPunches)
         let totals = try String(contentsOf: totalsURL, encoding: .utf8)
         let daily = try String(contentsOf: dailyURL, encoding: .utf8)
         XCTAssertTrue(totals.contains("Regular Hours"))

@@ -13,6 +13,8 @@ final class HRPayrollViewModel: ObservableObject {
     @Published private(set) var isLoading = false
     // Notify SwiftUI subscribers whenever this stored state changes.
     @Published var errorMessage = ""
+    /// HR-only fictional overlay, not a signed department approval or database write.
+    @Published private(set) var demoApprovalSimulationActive = false
 
     private let profile: UserProfile
     // Dependency injection: tests can use a fake API and production can use real HTTP.
@@ -25,7 +27,6 @@ final class HRPayrollViewModel: ObservableObject {
     }
 
     var isAuthorized: Bool { profile.canAccessPayroll }
-
     /// Never silently export partial weeks, unsigned forms or unresolved punches.
     var canExport: Bool {
         guard isAuthorized, !isLoading, let packet else { return false }
@@ -53,6 +54,32 @@ final class HRPayrollViewModel: ObservableObject {
         sheets.filter { $0.status != .pending }.count
     }
 
+    /// Screen-only copies with fictional signoffs. Real `packet` and API state stay untouched.
+    var displayedSheets: [DepartmentTimesheet] {
+        guard demoApprovalSimulationActive, AppConfig.demoMode, profile.role == .hr else {
+            return sheets
+        }
+        return sheets.map { original in
+            var copy = original
+            copy.status = .approved
+            copy.supervisorName = "SIMULATED SIGNOFF - NOT REAL"
+            copy.signedAt = Date(timeIntervalSince1970: 1_700_000_000)
+            copy.signaturePresent = true
+            return copy
+        }
+    }
+
+    var simulatedApprovalCount: Int { displayedSheets.filter { $0.status != .pending }.count }
+
+    func enableDemoApprovalSimulation() {
+        guard AppConfig.demoMode, profile.role == .hr, packet != nil else { return }
+        demoApprovalSimulationActive = true
+    }
+
+    func disableDemoApprovalSimulation() {
+        demoApprovalSimulationActive = false
+    }
+
     // Refresh this screen from its API or local source of truth.
     func load() async {
         guard isAuthorized else {
@@ -66,6 +93,7 @@ final class HRPayrollViewModel: ObservableObject {
             // The response is intentionally HR-only. Never build it by
             // allowing ordinary employees to fetch department timesheets.
             packet = try await api.fetchHRPayrollPacket()
+            // Keep an explicit HR demonstration active after a manual refresh.
             errorMessage = ""
         } catch {
             packet = nil
@@ -73,16 +101,16 @@ final class HRPayrollViewModel: ObservableObject {
         }
     }
 
-    /// DEMO-ONLY shortcut to inspect five signed example forms.
-    func prepareSample() async {
-        guard AppConfig.demoMode && isAuthorized else { return }
-        do {
-            try await api.prepareDemoHRPacket()
-            await load()
-        } catch {
-            errorMessage = error.localizedDescription
+    /// Non-mutating: render the currently loaded snapshots as a clearly labeled
+    /// demo preview. Do NOT call the approval endpoint from a preview action.
+    func previewDemoPDF(heading: String = "PAYROLL") throws -> URL {
+        guard AppConfig.demoMode, isAuthorized, !isLoading, !sheets.isEmpty else {
+            throw HRPayrollError.incomplete
         }
+        return try PayrollPDFExporter.export(sheets: displayedSheets, demoPreview: true,
+                                             heading: heading)
     }
+
 
     // Export one row per employee/week: ideal for manually entering approved totals.
     func exportWeeklyCSV() throws -> URL {
@@ -97,17 +125,17 @@ final class HRPayrollViewModel: ObservableObject {
     }
 
     // Generate a combined PDF containing separate forms for all five departments.
-    func exportAll() throws -> URL {
+    func exportAll(heading: String = "PAYROLL") throws -> URL {
         guard canExport else { throw HRPayrollError.incomplete }
-        return try PayrollPDFExporter.export(sheets: sheets)
+        return try PayrollPDFExporter.export(sheets: sheets, heading: heading)
     }
 
     // Generate an HR payroll-entry PDF for one department.
-    func exportDepartment(_ department: Department) throws -> URL {
+    func exportDepartment(_ department: Department, heading: String = "PAYROLL") throws -> URL {
         guard canExport, let sheet = sheets.first(where: {
             $0.department == department
         }) else { throw HRPayrollError.incomplete }
-        return try PayrollPDFExporter.export(sheets: [sheet])
+        return try PayrollPDFExporter.export(sheets: [sheet], heading: heading)
     }
 }
 

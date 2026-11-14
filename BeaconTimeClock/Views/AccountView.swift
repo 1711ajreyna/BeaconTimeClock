@@ -60,15 +60,37 @@ struct AccountView: View {
                     }
                 }
 
-                if AppConfig.demoMode && profile.canAccessPayroll {
-                    Section("HR Management") {
-                        NavigationLink("Manage Staff") { StaffManagementView(api: services.api) }
-                            .accessibilityIdentifier("manage_staff_link")
+                if profile.canManageStaffAccounts {
+                    Section("Staff Accounts") {
+                        NavigationLink("Manage Staff Accounts") {
+                            StaffManagementView(profile: profile, api: services.api)
+                        }
+                        .accessibilityIdentifier("manage_staff_link")
+                        Text(profile.role == .hr
+                             ? "HR can create employees and supervisors in any department."
+                             : "Supervisors can create and edit employees in their own department only.")
+                            .font(.caption).foregroundStyle(.secondary)
                     }
                 }
 
                 Section("Language") {
                     LanguagePreferencePicker()
+                }
+
+                Section("Privacy & Support") {
+                    if let url = AppConfig.privacyPolicyURL {
+                        Link("Privacy Policy", destination: url)
+                    }
+                    if let url = AppConfig.supportURL {
+                        Link("Help & Support", destination: url)
+                    }
+                    #if DEBUG
+                    if AppConfig.privacyPolicyURL == nil || AppConfig.supportURL == nil {
+                        Text("App Store checklist: set real PRIVACY_POLICY_URL and SUPPORT_URL in the target's Info settings.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    #endif
                 }
 
                 Section {

@@ -12,9 +12,15 @@ struct HRPayrollView: View {
     @State private var previewURL: URL?
     @State private var readyToShare: URL?
     @State private var csvReadyToShare: URL?
+    // Editable report heading. Week-ending date is derived from the actual packet.
+    @AppStorage("payroll.report.heading") private var payrollHeading = "PAYROLL"
+    @State private var showDemoApprovalConfirmation = false
+    @State private var demoPreviewShareURL: URL?
+    private let isHRRole: Bool
 
     // Create this object with the dependencies or state it needs; avoid hidden global services.
     init(profile: UserProfile, api: WorkflowAPI) {
+        isHRRole = profile.role == .hr
         _viewModel = StateObject(
             wrappedValue: HRPayrollViewModel(profile: profile, api: api)
         )
@@ -34,27 +40,56 @@ struct HRPayrollView: View {
                         description: Text("Only HR and administrators can view payroll details.")
                     )
                 } else {
-                    // The demo button prepares the simulated signed packets and
-                    // opens the combined PDF in a single, discoverable action.
-                    // It cannot submit payroll or approve production records.
+                    // Preview and approval preparation must be separate actions.
+                    // Preview MUST NOT change the live demo timesheets.
                     if AppConfig.demoMode {
-                        Section("Demo PDF Preview") {
+                        Section("Demonstration") {
                             Button {
-                                Task {
-                                    await viewModel.prepareSample()
-                                    if viewModel.canExport {
-                                        generatePDF(for: nil)
-                                    }
+                                do {
+                                    let url = try viewModel.previewDemoPDF(heading: payrollHeading)
+                                    previewURL = url
+                                    readyToShare = url
+                                    demoPreviewShareURL = viewModel.demoApprovalSimulationActive ? url : nil
+                                    viewModel.errorMessage = ""
+                                } catch {
+                                    viewModel.errorMessage = error.localizedDescription
                                 }
                             } label: {
                                 Label("Preview Demo Payroll PDF", systemImage: "doc.richtext")
                             }
-                            .disabled(viewModel.isLoading)
+                            .disabled(viewModel.isLoading || viewModel.packet == nil || !isValidPayrollHeading)
                             .accessibilityIdentifier("preview_demo_payroll_pdf_button")
 
-                            Text("Generates five simulated, signed example forms for class demonstrations only. No real payroll is sent or approved.")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
+                            if isHRRole && viewModel.demoApprovalSimulationActive {
+                                Label("DEMO ONLY: 5 simulated approvals shown. Real approvals are unchanged.",
+                                      systemImage: "testtube.2")
+                                    .foregroundStyle(.orange)
+                                    .font(.subheadline.bold())
+                                    .accessibilityIdentifier("demo_payroll_simulation_active")
+                                Button("End Demo Approval Simulation") {
+                                    viewModel.disableDemoApprovalSimulation()
+                                    demoPreviewShareURL = nil
+                                    readyToShare = nil
+                                }
+                                .accessibilityIdentifier("disable_demo_approvals_button")
+                            } else if isHRRole {
+                                Button("Simulate All Five Approvals (Demo Only)") {
+                                    showDemoApprovalConfirmation = true
+                                }
+                                .accessibilityIdentifier("simulate_demo_approvals_button")
+                                .disabled(viewModel.isLoading || viewModel.packet == nil)
+                            }
+                            if isHRRole && viewModel.demoApprovalSimulationActive,
+                               let demoPreviewShareURL {
+                                ShareLink(item: demoPreviewShareURL) {
+                                    Label("Share WATERMARKED Demo PDF", systemImage: "square.and.arrow.up")
+                                }
+                                .accessibilityIdentifier("share_simulated_pdf_button")
+                            }
+                            Text("Simulation affects this HR screen and the demonstration PDF only. No department's real status, signature or server record is changed.")
+                                .font(.caption).foregroundStyle(.secondary)
+                            Text("Real departmental approvals remain restricted to each assigned supervisor; HR cannot sign for them.")
+                                .font(.caption).foregroundStyle(.secondary)
                         }
                     }
                     if let packet = viewModel.packet {
@@ -63,22 +98,57 @@ struct HRPayrollView: View {
                                 "\(packet.weekStart) to \(packet.weekEnd)")
                             LabeledContent("Department forms", value:
                                 "\(viewModel.sheets.count) / 5")
-                            LabeledContent("Approved", value:
+                            LabeledContent("Actually approved", value:
                                 "\(viewModel.approvalCount) / 5")
+                            if viewModel.demoApprovalSimulationActive {
+                                LabeledContent("Simulated for HR demo", value:
+                                    "\(viewModel.simulatedApprovalCount) / 5")
+                            }
                             Text("Source: weekly backend snapshots. Approved hours are not recalculated on the phone.")
                                 .font(.caption).foregroundStyle(.secondary)
                         }
                     }
 
+                    if let packet = viewModel.packet {
+                        Section("Payroll PDF Filename") {
+                            TextField("Report heading", text: $payrollHeading)
+                                .textInputAutocapitalization(.characters)
+                                .autocorrectionDisabled()
+                                .accessibilityIdentifier("payroll_heading_field")
+                            Button("Reset heading to PAYROLL") {
+                                payrollHeading = "PAYROLL"
+                            }
+                            .accessibilityIdentifier("reset_payroll_heading_button")
+                            if !isValidPayrollHeading {
+                                Text("Use 1–35 letters, numbers, spaces, underscores or hyphens.")
+                                    .font(.caption).foregroundStyle(.red)
+                            }
+                            if let title = try? PayrollReportNaming.displayTitle(
+                                weekEnd: packet.weekEnd, heading: payrollHeading) {
+                                LabeledContent("Title inside PDF", value: title)
+                            }
+                            if let filename = try? PayrollReportNaming.fileName(
+                                weekEnd: packet.weekEnd, heading: payrollHeading,
+                                department: nil, demoPreview: viewModel.demoApprovalSimulationActive) {
+                                LabeledContent("Saved filename", value: filename)
+                            }
+                            LabeledContent("Week-ending Sunday", value: packet.weekEnd)
+                            Text("The editable heading is saved on this device. The Sunday date comes from the selected pay-period records: never change it just to rename a signed report. Choose the correct weekly packet to change the date. PDF title uses DD/MM/YYYY; filenames use DD-MM-YYYY because '/' is invalid in a filename.")
+                                .font(.caption).foregroundStyle(.secondary)
+                        }
+                    }
+
                     Section("Department Payroll Forms") {
-                        ForEach(viewModel.sheets) { sheet in
+                        ForEach(viewModel.displayedSheets) { sheet in
                             VStack(alignment: .leading, spacing: 8) {
                                 HStack {
                                     Text(sheet.department.displayName).font(.headline)
                                     Spacer()
-                                    Text(sheet.status.displayName)
-                                        .foregroundStyle(sheet.status == .pending ? .orange : .green)
-                                        .font(.caption)
+                                Text(viewModel.demoApprovalSimulationActive
+                                     ? "Simulated Approved" : sheet.status.displayName)
+                                    .foregroundStyle(viewModel.demoApprovalSimulationActive
+                                                     ? .orange : (sheet.status == .pending ? .orange : .green))
+                                    .font(.caption)
                                 }
                                 Text("\(sheet.employees.count) \(AppLocalization.text("employees")) · " +
                                      String(format: AppLocalization.text("Regular %.2f / OT %.2f / Total %.2f"),
@@ -95,7 +165,7 @@ struct HRPayrollView: View {
                                         Image(systemName: "doc.richtext")
                                     }
                                 }
-                                .disabled(!viewModel.canExport)
+                                .disabled(!viewModel.canExport || !isValidPayrollHeading)
                             }
                             .padding(.vertical, 5)
                         }
@@ -107,7 +177,7 @@ struct HRPayrollView: View {
                         } label: {
                             Label("Open All Five Department Forms", systemImage: "doc.on.doc")
                         }
-                        .disabled(!viewModel.canExport)
+                        .disabled(!viewModel.canExport || !isValidPayrollHeading)
 
                         if let readyToShare {
                             ShareLink(item: readyToShare) {
@@ -157,7 +227,29 @@ struct HRPayrollView: View {
             // Enable pull-to-refresh without duplicating API logic.
             .refreshable { await viewModel.load() }
             .quickLookPreview($previewURL)
+            .onChange(of: payrollHeading) { _, _ in
+                // Never share a previously generated file after editing its title.
+                readyToShare = nil
+                demoPreviewShareURL = nil
+            }
+            .confirmationDialog(
+                "Demonstration approvals only",
+                isPresented: $showDemoApprovalConfirmation,
+                titleVisibility: .visible
+            ) {
+                Button("Show Five Simulated Approvals") {
+                    demoPreviewShareURL = nil
+                    viewModel.enableDemoApprovalSimulation()
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("This changes only the HR demo display and read-only PDF. No supervisor approvals, signatures, or actual payroll exports are created.")
+            }
         }
+    }
+
+    private var isValidPayrollHeading: Bool {
+        (try? PayrollReportNaming.sanitizedHeading(payrollHeading)) != nil
     }
 
     // Prepare a CSV for the share sheet; never silently upload staff records.
@@ -178,8 +270,8 @@ struct HRPayrollView: View {
     // Export the chosen data and hand it to the iOS sharing/preview UI.
     private func generatePDF(for department: Department?) {
         do {
-            let url = try department.map { try viewModel.exportDepartment($0) }
-                ?? viewModel.exportAll()
+            let url = try department.map { try viewModel.exportDepartment($0, heading: payrollHeading) }
+                ?? viewModel.exportAll(heading: payrollHeading)
             readyToShare = url
             previewURL = url
             viewModel.errorMessage = ""

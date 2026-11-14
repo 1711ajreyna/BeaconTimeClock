@@ -146,12 +146,12 @@ struct LoginView: View {
                         Image(systemName: "arrow.right")
                     }
                     .padding(.horizontal, 16)
-                    .frame(height: 50)
-                    .frame(maxWidth: .infinity)
+                    .frame(maxWidth: .infinity, minHeight: 54)
+                    .foregroundStyle(.white)
+                    .background(CSCTheme.blue, in: RoundedRectangle(cornerRadius: 12))
+                    .contentShape(RoundedRectangle(cornerRadius: 12))
                 }
                 .buttonStyle(.plain)
-                .foregroundStyle(.white)
-                .background(CSCTheme.blue, in: RoundedRectangle(cornerRadius: 12))
                 .disabled(email.isEmpty || password.isEmpty || auth.isWorking)
                 .opacity(email.isEmpty || password.isEmpty ? 0.65 : 1)
                 // Stable accessibility ID allows repeatable XCUITest element lookup.
@@ -181,16 +181,31 @@ struct LoginView: View {
                 }
 
                 Menu {
-                    Button("Machine Shop") { fillDemo(AppConfig.demoMachineShopSupervisorEmail) }
-                    Button("Metals") { fillDemo(AppConfig.demoMetalsSupervisorEmail) }
-                    Button("Plastics") { fillDemo(AppConfig.demoPlasticsSupervisorEmail) }
-                    Button("Litho") { fillDemo(AppConfig.demoLithoSupervisorEmail) }
+                    ForEach(Department.allCases, id: \.self) { department in
+                        Button(department.displayName) {
+                            fillDemo(DemoTrialAccounts.employeeEmail(for: department))
+                        }
+                    }
                 } label: {
-                    Label("Other department supervisors", systemImage: "person.3")
-                        .font(.subheadline)
+                    Label("Trial employee by department", systemImage: "person.crop.circle")
+                        .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                // Stable accessibility ID allows repeatable XCUITest element lookup.
+                .accessibilityIdentifier("trial_employees_menu")
+
+                Menu {
+                    ForEach(Department.allCases, id: \.self) { department in
+                        Button(department.displayName) {
+                            fillDemo(DemoTrialAccounts.supervisorEmail(for: department))
+                        }
+                    }
+                } label: {
+                    Label("Trial supervisor by department", systemImage: "person.3")
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
                 .accessibilityIdentifier("other_supervisors_menu")
+                Text("Trial accounts are preloaded and isolated by department. Employees cannot create accounts; supervisors add employees only in their department; only HR creates supervisors.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
         }
     }

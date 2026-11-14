@@ -1,0 +1,12 @@
+# Local build and Xcode state
+.build/
+.DS_Store
+**/xcuserdata/
+**/*.xcuserstate
+# Private/local backups and all secret files
+*Backup-*/
+*.xcconfig.local
+.env
+.env.*
+!*.env.example
+supabase/functions/.env

@@ -106,12 +106,13 @@ struct SupervisorPortalView: View {
                     }
 
                     // Choose the explicit demo path; production must use real backend controls.
-                    if AppConfig.demoMode && services.profile?.canAccessPayroll == true {
+                    if AppConfig.demoMode && services.profile?.role == .supervisor &&
+                        services.profile?.department != nil {
                         Section(
                             "Demonstration"
                         ) {
                             Button(
-                                "Reset Weekly Demo"
+                                "Reset My Department Approval (Demo)"
                             ) {
                                 Task {
                                     await viewModel
@@ -120,7 +121,7 @@ struct SupervisorPortalView: View {
                             }
 
                             Text(
-                                "Use this after demonstrating punch corrections and approvals so the five departments return to their starting state."
+                                "Demo only: clears this supervisor's department approval, signature and timestamp. Other departments and timecard history are untouched."
                             )
                             .font(.caption)
                             .foregroundStyle(

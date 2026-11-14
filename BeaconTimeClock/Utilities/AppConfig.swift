@@ -18,7 +18,11 @@ enum AppConfig {
     // Release fails closed until the production Supabase environment is set.
     // Compile-time distinction: DEBUG can show demos; Release must not authenticate fake users.
     #if DEBUG
-    static let demoMode = true
+    // Select -UseLiveSupabase in the Xcode scheme's Run Arguments to test
+    // a real staging backend while retaining debugger/test tools.
+    static var demoMode: Bool {
+        !ProcessInfo.processInfo.arguments.contains("-UseLiveSupabase")
+    }
     #else
     static let demoMode = false
     #endif
@@ -63,6 +67,21 @@ enum AppConfig {
         supabaseURL?
             .appendingPathComponent("functions")
             .appendingPathComponent("v1")
+    }
+
+    // MARK: - App Store support links
+
+    /// Real, published HTTPS URLs must be supplied in app Info settings.
+    /// Never invent a privacy policy URL or hard-code a placeholder link.
+    static var privacyPolicyURL: URL? { publicHTTPSURL(forKey: "PRIVACY_POLICY_URL") }
+    static var supportURL: URL? { publicHTTPSURL(forKey: "SUPPORT_URL") }
+
+    private static func publicHTTPSURL(forKey key: String) -> URL? {
+        guard let raw = Bundle.main.object(forInfoDictionaryKey: key) as? String,
+              let url = URL(string: raw),
+              url.scheme?.lowercased() == "https",
+              url.host != nil else { return nil }
+        return url
     }
 
     // MARK: - Beacon

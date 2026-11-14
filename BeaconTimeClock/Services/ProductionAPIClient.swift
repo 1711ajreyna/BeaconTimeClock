@@ -46,6 +46,17 @@ final class ProductionAPIClient: WorkflowAPI {
         self.tokenProvider = tokenProvider
     }
 
+    // Staff endpoints must be deployed with server-side role and department checks.
+    func fetchStaff() async throws -> [StaffMember] {
+        try await sendWithoutBody(path: "staff-list", method: "GET",
+            responseType: [StaffMember].self)
+    }
+
+    func saveStaff(_ member: StaffMember) async throws -> StaffMember {
+        try await send(path: "staff-save", method: "POST", body: member,
+            responseType: StaffMember.self)
+    }
+
     // Return the authenticated employee/role profile.
     func fetchMyProfile() async throws -> UserProfile {
         try await sendWithoutBody(
@@ -272,6 +283,11 @@ final class ProductionAPIClient: WorkflowAPI {
             "Bearer \(token)",
             forHTTPHeaderField: "Authorization"
         )
+        // Supabase Edge Functions accept the public project key in `apikey`;
+        // NEVER embed a secret/service-role key in an Apple app.
+        if let publicKey = AppConfig.supabasePublishableKey {
+            request.setValue(publicKey, forHTTPHeaderField: "apikey")
+        }
 
         return request
     }

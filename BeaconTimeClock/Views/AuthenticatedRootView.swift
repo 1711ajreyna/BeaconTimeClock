@@ -42,7 +42,7 @@ struct AuthenticatedRootView: View {
                     }
             }
 
-            if profile.role.canUseSupervisorTools {
+            if profile.role == .supervisor && profile.department != nil {
                 SupervisorPortalView(
                     viewModel: SupervisorPortalViewModel(
                         api: services.api
@@ -91,8 +91,12 @@ struct AuthenticatedRootView: View {
                 }
         }
         .task {
+            // The demo scanner is synthetic; no location permission is needed.
+            // Only suppress notification prompts when UI tests explicitly request it.
             beacon.requestPermissionAndStart()
-            await services.notificationScheduler.requestPermission()
+            if !ProcessInfo.processInfo.arguments.contains("-UITesting-NoPermissions") {
+                await services.notificationScheduler.requestPermission()
+            }
         }
     }
 }

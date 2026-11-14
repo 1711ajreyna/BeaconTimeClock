@@ -1,0 +1,7 @@
+project_id = "beacontimeclock"
+
+[functions.staff-list]
+verify_jwt = true
+
+[functions.staff-save]
+verify_jwt = true

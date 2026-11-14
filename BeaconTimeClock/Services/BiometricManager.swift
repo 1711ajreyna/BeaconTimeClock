@@ -17,10 +17,15 @@ enum BiometricError: LocalizedError {
     }
 }
 
-/// The app recieves only an authentication result. It never recieves the
-///  person's fingerprint, face image, or biometric template.
-// This type groups related state and behavior under a clear responsibility.
-struct BiometricManager {
+/// Use a protocol so a denied or cancelled biometric attempt can be
+/// regression-tested without requesting actual Face ID in the test runner.
+@MainActor
+protocol PunchBiometricAuthenticating {
+    func authenticate() async throws
+}
+
+/// The app receives only an authentication result, never biometric templates.
+struct BiometricManager: PunchBiometricAuthenticating {
     
     // A NEW context forces a fresh Face ID / Touch ID attempt for each action.
     // Demo mode also prompts: never ship or demonstrate a silent identity bypass.

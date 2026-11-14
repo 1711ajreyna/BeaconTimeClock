@@ -185,7 +185,7 @@ final class DemoAPIClient: WorkflowAPI {
     func createWorkShift(_ request: CreateWorkShiftRequest) async throws -> WorkShift {
         try requireSupervisor()
         let shift = request.shift
-        try requireDepartment(shift.department)
+        try requireDepartmentEdit(shift.department)
         guard !shift.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
               shift.endTime > shift.startTime else {
             throw DemoError.invalidSchedule
@@ -209,7 +209,7 @@ final class DemoAPIClient: WorkflowAPI {
               employee.department == shift.department else {
             throw DemoError.unauthorized
         }
-        try requireDepartment(shift.department)
+        try requireDepartmentEdit(shift.department)
         let rowID = shiftRows.values.first { $0.employeeID == request.employeeID }?.id ?? UUID()
         // One active daily schedule per employee. Reject duplicate assignments.
         let existing = rosterAssignments.values.first { assignment in
@@ -247,17 +247,23 @@ final class DemoAPIClient: WorkflowAPI {
               let shift = workShifts[assignment.shiftID] else {
             throw DemoError.notFound
         }
-        try requireDepartment(shift.department) // Authorize BEFORE mutation.
+        try requireDepartmentEdit(shift.department) // Authorize BEFORE mutation.
         rosterAssignments.removeValue(forKey: request.assignmentID)
         // A production system also checks whether payroll events already exist.
     }
 
-    // Reused by ALL demo reads and writes. Not a production security boundary.
-    // Reject attempts to read or edit departments outside the signed-in user's scope.
+    // Read scope: supervisors may inspect own departments; HR/admin may review all.
+    // Demo only. Production must authorize every request on the server.
     private func requireDepartment(_ department: Department) throws {
-        // Obtain the signed-in user before exposing any private data.
-        guard let profile = profileProvider(),
-              profile.canManageDepartment(department) else {
+        guard let profile = profileProvider(), profile.canManageDepartment(department) else {
+            throw DemoError.unauthorized
+        }
+    }
+
+    // Write scope: only an assigned supervisor may mutate departmental operations.
+    // Always authorize before changing roster, shifts, punches or approval status.
+    private func requireDepartmentEdit(_ department: Department) throws {
+        guard let profile = profileProvider(), profile.canEditDepartment(department) else {
             throw DemoError.unauthorized
         }
     }
@@ -309,7 +315,7 @@ final class DemoAPIClient: WorkflowAPI {
             throw DemoError.employeeShiftNotFound
         }
 
-        try requireDepartment(row.department)
+        try requireDepartmentEdit(row.department)
 
         do {
             try CaliforniaRestBreakPolicy.validate(
@@ -421,18 +427,9 @@ final class DemoAPIClient: WorkflowAPI {
         )
     }
 
-    /// Makes a complete *simulated* signed packet, for capstone HR PDF demos.
-    /// Does NOT send email, certify actual hours or submit real payroll.
-    // Seed an approved sample packet for a repeatable HR demonstration.
-    func prepareDemoHRPacket() async throws {
-        try requireHR()
-        for id in Array(timesheets.keys) {
-            timesheets[id]?.status = .approved
-            timesheets[id]?.signedAt = Date()
-            timesheets[id]?.supervisorName = "DEMO SIGNOFF - NOT REAL"
-            timesheets[id]?.signaturePresent = true
-        }
-    }
+    /// No HR operation may silently sign real department records. The HR
+    /// demonstration uses a read-only overlay in HRPayrollViewModel instead.
+    func prepareDemoHRPacket() async throws { throw DemoError.unauthorized }
 
     // Load department approval progress and edit permissions.
     func fetchSupervisorDashboard()
@@ -451,7 +448,7 @@ final class DemoAPIClient: WorkflowAPI {
                 overtimeHours: sheet.overtimeHours,
                 totalHours: sheet.totalHours, supervisorName: sheet.supervisorName,
                 signedAt: sheet.signedAt,
-                canEdit: sheet.status == .pending && profile.canManageDepartment(sheet.department)
+                canEdit: sheet.status == .pending && profile.canEditDepartment(sheet.department)
             )
         }
         let allApproved = !timesheets.isEmpty && timesheets.values.allSatisfy {
@@ -500,7 +497,7 @@ final class DemoAPIClient: WorkflowAPI {
             throw DemoError.notFound
         }
 
-        try requireDepartment(sheet.department)
+        try requireDepartmentEdit(sheet.department)
         guard sheet.status == .pending else {
             throw DemoError.alreadyApproved
         }
@@ -562,7 +559,7 @@ final class DemoAPIClient: WorkflowAPI {
             throw DemoError.notFound
         }
 
-        try requireDepartment(sheet.department)
+        try requireDepartmentEdit(sheet.department)
         guard sheet.status == .pending else {
             throw DemoError.alreadyApproved
         }
@@ -615,19 +612,42 @@ final class DemoAPIClient: WorkflowAPI {
     }
 
     func resetDemoData() async {
-        // The reset impacts ALL departments, so ordinary supervisors cannot run it.
-        guard (try? requireHR()) != nil else { return }
-        seed()
+        // Only the signed-in supervisor's own demo department approval may reset.
+        guard AppConfig.demoMode, let user = profileProvider(),
+              user.role == .supervisor, let assigned = user.department else { return }
+        for id in Array(timesheets.keys) where timesheets[id]?.department == assigned {
+            timesheets[id]?.status = .pending
+            timesheets[id]?.signedAt = nil
+            timesheets[id]?.supervisorName = nil
+            timesheets[id]?.signaturePresent = false
+        }
     }
 
     func fetchStaff() async throws -> [StaffMember] {
-        try requireHR()
+        guard let requester = profileProvider(), requester.canManageStaffAccounts else {
+            throw DemoError.unauthorized
+        }
         if let error = staffDirectory.loadError { throw error }
-        return staffDirectory.members.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+        return staffDirectory.members.filter { entry in
+            requester.canSaveStaff(entry, existing: entry)
+        }.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
     }
 
     func saveStaff(_ member: StaffMember) async throws -> StaffMember {
-        try requireHR()
+        // Enforce permissions at the service boundary, not just a hidden UI picker.
+        guard let requester = profileProvider(), requester.canManageStaffAccounts else {
+            throw DemoError.unauthorized
+        }
+        if let error = staffDirectory.loadError { throw error }
+        let existing = staffDirectory.members.first { $0.id == member.id }
+        if requester.role == .hr &&
+            ((member.role != .employee && member.role != .supervisor) ||
+             (existing != nil && existing?.role != .employee && existing?.role != .supervisor)) {
+            throw StaffError.protectedAccount
+        }
+        guard requester.canSaveStaff(member, existing: existing) else {
+            throw DemoError.unauthorized
+        }
         let saved = try staffDirectory.save(member)
         synchronizeStaff()
         return saved
