@@ -17,6 +17,7 @@ final class BeaconManager: ObservableObject {
     @Published private(set) var estimatedDistanceMeters: Double?
 
     private let scanner: any BeaconScanning
+    private var lastObservationAt: Date?
 
     // Create this object with the dependencies or state it needs; avoid hidden global services.
     init(
@@ -31,6 +32,7 @@ final class BeaconManager: ObservableObject {
         }
 
         self.scanner.observationHandler = { [weak self] observation in
+            self?.lastObservationAt = observation.detected ? Date() : nil
             self?.beaconDetected = observation.detected
             self?.rssi = observation.rssi
             self?.estimatedDistanceMeters = observation.estimatedDistanceMeters
@@ -38,6 +40,14 @@ final class BeaconManager: ObservableObject {
     }
 
     var isInsideAllowedZone: Bool {
+        // A stale reading is not adequate evidence of presence at the clock.
+        // The demo scanner emits one fixed event; it is NEVER used in Release.
+        if !AppConfig.demoMode {
+            guard let lastObservationAt,
+                  Date().timeIntervalSince(lastObservationAt) < 10 else {
+                return false
+            }
+        }
         guard beaconDetected,
               let distance = estimatedDistanceMeters,
               distance >= 0 else {

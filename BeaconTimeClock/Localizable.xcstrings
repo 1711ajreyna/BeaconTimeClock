@@ -693,6 +693,9 @@
         }
       }
     },
+    "Daily CSV: a separate dated row for each shift, including overnight +1-day times. Weekly CSV: one row per employee so hours are not accidentally double-counted. Both require approved packets and must be handled as confidential payroll data." : {
+
+    },
     "Delivered to HR" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1212,6 +1215,9 @@
         }
       }
     },
+    "Face ID or Touch ID is required for every clock and lunch punch." : {
+
+    },
     "Five distinct department packets must be approved, signed, and free of unresolved time-punch exceptions before HR PDF export." : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1336,6 +1342,9 @@
           }
         }
       }
+    },
+    "HR Spreadsheet Exports" : {
+
     },
     "HR Status" : {
       "localizations" : {
@@ -2003,6 +2012,9 @@
         }
       }
     },
+    "Prepare Daily Punch CSV" : {
+
+    },
     "Prepare Five Signed Example Packets" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -2013,6 +2025,9 @@
           }
         }
       }
+    },
+    "Prepare Weekly Hours CSV" : {
+
     },
     "Preview Demo Payroll PDF" : {
       "localizations" : {
@@ -2512,6 +2527,9 @@
           }
         }
       }
+    },
+    "Share or Save Prepared CSV" : {
+
     },
     "Shift" : {
       "localizations" : {

@@ -53,7 +53,13 @@ final class DemoAPIClient: WorkflowAPI {
     func submitPunch(
         _ request: SubmitPunchRequest
     ) async throws -> SubmitPunchResponse {
-        SubmitPunchResponse(
+        guard let profile = profileProvider(),
+              profile.employeeID != nil,
+              let employeeNumber = profile.employeeNumber,
+              employeeNumber == request.employeeID else {
+            throw DemoError.unauthorized
+        }
+        return SubmitPunchResponse(
             success: true,
             punchID: UUID(),
             serverTimestamp: Date(),

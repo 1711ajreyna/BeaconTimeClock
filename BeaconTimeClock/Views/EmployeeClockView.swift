@@ -40,6 +40,10 @@ struct EmployeeClockView: View {
                     }
 
                     punchButtons
+                    Label("Face ID or Touch ID is required for every clock and lunch punch.", systemImage: "faceid")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .accessibilityIdentifier("punch_biometric_requirement")
 
                     if !viewModel.statusMessage.isEmpty {
                         Text(AppLocalization.text(viewModel.statusMessage))
@@ -184,6 +188,7 @@ struct EmployeeClockView: View {
                 .tint(CSCTheme.blue)
                 .controlSize(.large)
                 .disabled(!viewModel.isAllowed(type))
+                .accessibilityIdentifier("punch_\(type.rawValue)_button")
             }
         }
     }

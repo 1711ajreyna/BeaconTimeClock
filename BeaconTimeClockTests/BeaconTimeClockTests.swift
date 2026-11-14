@@ -514,3 +514,55 @@ final class CountdownTests: XCTestCase {
         XCTAssertEqual(lunch.secondsRemaining, 0)
     }
 }
+
+
+// MARK: - MDI2 120 payroll export and demo authorization regression tests
+@MainActor
+final class MDI2120RegressionTests: XCTestCase {
+    func testHRCSVExportsSeparateDailyPunchesFromWeeklyTotals() async throws {
+        let hr = UserProfile(id: UUID(), displayName: "HR Tester", email: "hr@test.com",
+                             role: .hr, employeeID: nil, employeeNumber: nil, department: nil)
+        let api = DemoAPIClient { hr }
+        try await api.prepareDemoHRPacket()
+        let packet = try await api.fetchHRPayrollPacket()
+        let totalsURL = try PayrollCSVExporter.export(sheets: packet.departments, kind: .weeklyTotals)
+        let dailyURL = try PayrollCSVExporter.export(sheets: packet.departments, kind: .dailyPunches)
+        let totals = try String(contentsOf: totalsURL, encoding: .utf8)
+        let daily = try String(contentsOf: dailyURL, encoding: .utf8)
+        XCTAssertTrue(totals.contains("Regular Hours"))
+        XCTAssertTrue(totals.contains("Overtime Hours"))
+        XCTAssertFalse(totals.contains("Clock In"))
+        XCTAssertTrue(daily.contains("Work Date (Pacific)"))
+        XCTAssertTrue(daily.contains("Clock In"))
+        XCTAssertFalse(daily.contains("Regular Hours"),
+                       "Do not repeat week totals on each workday")
+        let employees = packet.departments.reduce(0) { $0 + $1.employees.count }
+        XCTAssertEqual(totals.split(separator: "\n").count, employees + 1)
+    }
+
+    func testDemoAPIRejectsUnsignedAndMismatchedEmployeePunches() async throws {
+        let unauthenticated = DemoAPIClient { nil }
+        let request = SubmitPunchRequest(employeeID: "EMP-001", type: .clockIn,
+                                         beaconUUID: nil, rssi: -55, estimatedDistance: 2)
+        do {
+            _ = try await unauthenticated.submitPunch(request)
+            XCTFail("Unsigned demo punch was accepted")
+        } catch {
+            guard case DemoAPIClient.DemoError.unauthorized = error else {
+                return XCTFail("Unexpected: \(error)")
+            }
+        }
+        let employee = UserProfile(id: UUID(), displayName: "Tester", email: "emp@test.com",
+                                   role: .employee, employeeID: UUID(),
+                                   employeeNumber: "EMP-999", department: .electrical)
+        let wrongAccount = DemoAPIClient { employee }
+        do {
+            _ = try await wrongAccount.submitPunch(request)
+            XCTFail("Cross-employee demo punch was accepted")
+        } catch {
+            guard case DemoAPIClient.DemoError.unauthorized = error else {
+                return XCTFail("Unexpected: \(error)")
+            }
+        }
+    }
+}

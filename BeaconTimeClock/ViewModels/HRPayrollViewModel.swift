@@ -84,6 +84,18 @@ final class HRPayrollViewModel: ObservableObject {
         }
     }
 
+    // Export one row per employee/week: ideal for manually entering approved totals.
+    func exportWeeklyCSV() throws -> URL {
+        guard canExport else { throw HRPayrollError.incomplete }
+        return try PayrollCSVExporter.export(sheets: sheets, kind: .weeklyTotals)
+    }
+
+    // Export individual dated shifts without repeating weekly hour totals.
+    func exportDailyCSV() throws -> URL {
+        guard canExport else { throw HRPayrollError.incomplete }
+        return try PayrollCSVExporter.export(sheets: sheets, kind: .dailyPunches)
+    }
+
     // Generate a combined PDF containing separate forms for all five departments.
     func exportAll() throws -> URL {
         guard canExport else { throw HRPayrollError.incomplete }

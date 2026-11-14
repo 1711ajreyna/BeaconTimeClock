@@ -1,4 +1,4 @@
-# App Store readiness — reviewed November 7, 2026
+# App Store readiness — initial review November 7, 2026; updated November 14, 2026
 
 There is no guaranteed first-pass approval. This is currently a demo-oriented project, not a verified production submission.
 
@@ -6,8 +6,8 @@ There is no guaranteed first-pass approval. This is currently a demo-oriented pr
 
 - **Build toolchain:** the active toolchain here is Xcode 16.4. Apple currently requires Xcode 26 or later and an iOS 26 SDK or later for uploads. Install a supported release toolchain, build, archive, and validate there. Keeping an iOS 18.5 deployment target is separate from the SDK used to build. [Apple SDK requirements](https://developer.apple.com/news/upcoming-requirements/?id=04282026a)
 - **Release backend:** Release disables demo auth. AppConfig expects SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY, but these are not configured in this project. ProductionAPIClient expects deployed endpoints. No backend implementation was included. Complete real authentication, server authorization, roster/payroll persistence, and staff invitation/role-management endpoints before advertising those features in Release.
-- **Device permissions:** added the missing Face ID and foreground location descriptions. Test permission denial, hardware absence, and recovery on a real iPhone. Debug skips actual biometric checks and simulates the beacon. [Face ID documentation](https://developer.apple.com/documentation/localauthentication/logging-a-user-into-your-app-with-face-id-or-touch-id)
-- **Privacy:** no published privacy-policy link or complete app privacy manifest was found in the supplied app. Supply your real policy and support URLs; audit SDK manifests and required-reason API use (including UserDefaults); complete accurate App Store privacy disclosures based on the actual backend. Do not declare that attendance, identity, or proximity data is never collected without checking the deployment.
+- **Device permissions:** Face ID and foreground location usage descriptions exist. The MDI2 120 update removed the demo bypass for Face ID/Touch ID: each punch now requests a fresh biometric check, including Debug. Debug **still simulates the beacon**. Test permission denial, unenrolled biometrics, hardware absence, and recovery on a real iPhone. [Face ID documentation](https://developer.apple.com/documentation/localauthentication/logging-a-user-into-your-app-with-face-id-or-touch-id)
+- **Privacy:** Added a minimal UserDefaults required-reason `PrivacyInfo.xcprivacy` (`CA92.1`), but no published privacy-policy link or complete collected-data declaration was found in the supplied app. Supply your real policy and support URLs; audit SDK manifests and required-reason API use (including UserDefaults); complete accurate App Store privacy disclosures based on the actual backend. Do not declare that attendance, identity, or proximity data is never collected without checking the deployment.
 
 ## Useful additions before submission
 
@@ -17,3 +17,7 @@ There is no guaranteed first-pass approval. This is currently a demo-oriented pr
 4. Add clear permission-denied/settings recovery and network-error/retry states, then test VoiceOver, larger text, iPad layouts, and Spanish. These improve usability and make the core workflow easier to review.
 
 No production staff-management backend, deletion endpoint, policy website, or App Store submission was created in this change. Local HR controls are intentionally labeled as a device-only demo. Decide how this workforce-only app should be distributed before preparing its store listing.
+
+## November 14 source changes
+
+Added HR daily/weekly CSV exports; clarified that the employee My Time view is local-cache history; added regression tests. Full review checklist is in `MDI2_120_REVIEW_AND_DEVICE_TEST_PLAN.md`. No iOS build/device test or real backend deployment has been completed by this audit.

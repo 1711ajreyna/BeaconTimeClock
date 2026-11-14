@@ -11,6 +11,7 @@ struct HRPayrollView: View {
     @StateObject private var viewModel: HRPayrollViewModel
     @State private var previewURL: URL?
     @State private var readyToShare: URL?
+    @State private var csvReadyToShare: URL?
 
     // Create this object with the dependencies or state it needs; avoid hidden global services.
     init(profile: UserProfile, api: WorkflowAPI) {
@@ -117,6 +118,28 @@ struct HRPayrollView: View {
                             .font(.caption).foregroundStyle(.secondary)
                     }
 
+                    Section("HR Spreadsheet Exports") {
+                        Button { generateCSV(daily: true) } label: {
+                            Label("Prepare Daily Punch CSV", systemImage: "calendar")
+                        }
+                        .disabled(!viewModel.canExport)
+                        .accessibilityIdentifier("prepare_daily_csv_button")
+
+                        Button { generateCSV(daily: false) } label: {
+                            Label("Prepare Weekly Hours CSV", systemImage: "tablecells")
+                        }
+                        .disabled(!viewModel.canExport)
+                        .accessibilityIdentifier("prepare_weekly_csv_button")
+
+                        if let csvReadyToShare {
+                            ShareLink(item: csvReadyToShare) {
+                                Label("Share or Save Prepared CSV", systemImage: "square.and.arrow.up")
+                            }
+                        }
+                        Text("Daily CSV: a separate dated row for each shift, including overnight +1-day times. Weekly CSV: one row per employee so hours are not accidentally double-counted. Both require approved packets and must be handled as confidential payroll data.")
+                            .font(.caption).foregroundStyle(.secondary)
+                    }
+
                     if !viewModel.canExport && !viewModel.isLoading {
                         Label("Forms are locked until all five departments have signed, approved timesheets.", systemImage: "lock.fill")
                             .font(.caption).foregroundStyle(.orange)
@@ -134,6 +157,21 @@ struct HRPayrollView: View {
             // Enable pull-to-refresh without duplicating API logic.
             .refreshable { await viewModel.load() }
             .quickLookPreview($previewURL)
+        }
+    }
+
+    // Prepare a CSV for the share sheet; never silently upload staff records.
+    private func generateCSV(daily: Bool) {
+        do {
+            if daily {
+                csvReadyToShare = try viewModel.exportDailyCSV()
+            } else {
+                csvReadyToShare = try viewModel.exportWeeklyCSV()
+            }
+            viewModel.errorMessage = ""
+        } catch {
+            csvReadyToShare = nil
+            viewModel.errorMessage = error.localizedDescription
         }
     }
 

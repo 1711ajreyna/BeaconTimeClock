@@ -38,7 +38,7 @@ final class EmployeeClockViewModel: ObservableObject {
     }
 
     var nextExpectedPunch: PunchType {
-        guard let latest = store.latestPunch(
+        guard let latest = store.latestConfirmedPunch(
             for: profile.employeeNumber ?? "UNKNOWN"
         ) else {
             return .clockIn
@@ -61,6 +61,11 @@ final class EmployeeClockViewModel: ObservableObject {
     }
 
     func submit(_ type: PunchType) async {
+        guard !isProcessing else { return }
+        guard profile.employeeNumber != nil else {
+            fail("This account does not have an assigned employee number.")
+            return
+        }
         guard beaconManager.isInsideAllowedZone else {
             fail(AppLocalization.text("Move into the approved beacon zone before punching."))
             return
@@ -74,8 +79,15 @@ final class EmployeeClockViewModel: ObservableObject {
         isProcessing = true
         defer { isProcessing = false }
 
+        var savedLocalCard: TimeCard?
         do {
+            // Never reuse a previous unlock: require a new biometric prompt for EVERY punch.
             try await biometricManager.authenticate()
+
+            // The employee may have left the zone while the biometric prompt was open.
+            guard beaconManager.isInsideAllowedZone else {
+                throw PunchSubmissionError.outsideBeaconZone
+            }
 
             let employeeNumber = profile.employeeNumber ?? "UNKNOWN"
 
@@ -91,6 +103,7 @@ final class EmployeeClockViewModel: ObservableObject {
             )
 
             try store.add(localCard)
+            savedLocalCard = localCard
 
             // MARK: - Submit Punch to Backend
 
@@ -121,6 +134,10 @@ final class EmployeeClockViewModel: ObservableObject {
                 )
             )
 
+            guard response.success else {
+                throw PunchSubmissionError.rejected
+            }
+
             try store.markSynced(
                 card: localCard,
                 remoteID: response.punchID,
@@ -136,9 +153,8 @@ final class EmployeeClockViewModel: ObservableObject {
             statusMessage =
                 "\(type.displayName) \(AppLocalization.text("accepted at")) \(response.serverTimestamp.formatted(date: .omitted, time: .shortened))."
         } catch {
-            if let latest = store.latestPunch,
-               latest.syncStatus == "pending" {
-                try? store.markFailed(card: latest)
+            if let savedLocalCard, savedLocalCard.syncStatus == "pending" {
+                try? store.markFailed(card: savedLocalCard)
             }
 
             fail(error.localizedDescription)
@@ -148,5 +164,18 @@ final class EmployeeClockViewModel: ObservableObject {
     private func fail(_ message: String) {
         statusMessage = message
         showError = true
+    }
+}
+
+
+private enum PunchSubmissionError: LocalizedError {
+    case rejected
+    case outsideBeaconZone
+
+    var errorDescription: String? {
+        switch self {
+        case .rejected: return "The server did not accept this time punch."
+        case .outsideBeaconZone: return "Workplace beacon verification expired. Return to the clock zone and try again."
+        }
     }
 }

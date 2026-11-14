@@ -10,7 +10,7 @@ enum BiometricError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .unavailable:
-            return "Face ID or touch ID is unavailable."
+            return "Face ID or Touch ID is unavailable or not enrolled. Set up biometrics in device settings before punching."
         case .failed:
             return "Identity verification failed or was cancelled."
         }
@@ -22,14 +22,11 @@ enum BiometricError: LocalizedError {
 // This type groups related state and behavior under a clear responsibility.
 struct BiometricManager {
     
-    // Invoke Face ID / Touch ID for protected actions in production.
+    // A NEW context forces a fresh Face ID / Touch ID attempt for each action.
+    // Demo mode also prompts: never ship or demonstrate a silent identity bypass.
     func authenticate() async throws {
-        // Choose the explicit demo path; production must use real backend controls.
-        if AppConfig.demoMode {
-            return
-        }
-        
         let context = LAContext()
+        context.touchIDAuthenticationAllowableReuseDuration = 0
         var error: NSError?
         
         guard context.canEvaluatePolicy(

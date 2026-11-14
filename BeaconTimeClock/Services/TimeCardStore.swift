@@ -32,6 +32,12 @@ final class TimeCardStore: ObservableObject {
         timeCards.first { $0.employeeID == employeeNumber }
     }
 
+    /// Only server-confirmed events advance the clock sequence. Failed local
+    /// attempts stay visible in history for reconciliation, not as valid punches.
+    func latestConfirmedPunch(for employeeNumber: String) -> TimeCard? {
+        timeCards.first { $0.employeeID == employeeNumber && $0.syncStatus == "synced" }
+    }
+
     /// Demo data reset affects only the signed-in employee.
     // Clear only the selected employee's local demo records.
     func clearDemoPunches(for employeeNumber: String) throws {
