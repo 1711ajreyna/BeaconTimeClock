@@ -29,13 +29,13 @@ final class MyShiftViewModel: ObservableObject {
         api: WorkflowAPI,
         beacon: BeaconManager,
         notifications: NotificationScheduler,
-        biometric: BiometricManager = BiometricManager(),
+        biometric: BiometricManager? = nil,
         breakTimer: BreakTimerManager? = nil
     ) {
         self.api = api
         self.beacon = beacon
         self.notifications = notifications
-        self.biometric = biometric
+        self.biometric = biometric ?? BiometricManager()
         self.breakTimer = breakTimer ?? BreakTimerManager()
     }
 

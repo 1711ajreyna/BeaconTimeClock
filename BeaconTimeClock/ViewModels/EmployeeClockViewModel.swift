@@ -16,7 +16,7 @@ final class EmployeeClockViewModel: ObservableObject {
     private let store: TimeCardStore
     private let beaconManager: BeaconManager
     private let lunchTimer: LunchTimerManager
-    private let biometricManager: BiometricManager
+    private let biometricManager: any PunchBiometricAuthenticating
     // Dependency injection: tests can use a fake API and production can use real HTTP.
     private let api: WorkflowAPI
 
@@ -27,14 +27,14 @@ final class EmployeeClockViewModel: ObservableObject {
         beaconManager: BeaconManager,
         lunchTimer: LunchTimerManager,
         api: WorkflowAPI,
-        biometricManager: BiometricManager = BiometricManager()
+        biometricManager: (any PunchBiometricAuthenticating)? = nil
     ) {
         self.profile = profile
         self.store = store
         self.beaconManager = beaconManager
         self.lunchTimer = lunchTimer
         self.api = api
-        self.biometricManager = biometricManager
+        self.biometricManager = biometricManager ?? BiometricManager()
     }
 
     var nextExpectedPunch: PunchType {
